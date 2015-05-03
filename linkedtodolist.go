@@ -102,6 +102,19 @@ func (lst *LinkedTodoList) newLayer() {
 	lst.rebuild(depth - 1)
 }
 
+func (lst *LinkedTodoList) removeLayer() {
+	depth := len(lst.Sentinel)
+	ubottom := lst.Sentinel[depth-1]
+	if depth >= 2 {
+		lst.Sentinel[depth-3].down = ubottom
+	}
+	lst.Sentinel[depth-2] = ubottom
+	lst.lengths[depth-2] = lst.lengths[depth-1]
+	lst.lengths = lst.lengths[:depth-1]
+	lst.Sentinel = lst.Sentinel[:depth-1] // reduce size
+	lst.rebuild(len(lst.Sentinel) - 2)
+}
+
 func (lst *LinkedTodoList) Search(key int) (value interface{}, ok bool) {
 	path := lst.findPredecessors(key)
 	uh := path[len(path)-1]
@@ -114,7 +127,7 @@ func (lst *LinkedTodoList) Search(key int) (value interface{}, ok bool) {
 
 func (lst *LinkedTodoList) Delete(key int) (value interface{}, ok bool) {
 	path := lst.findPredecessors(key)
-	//depth := len(lst.Sentinel)
+	depth := len(lst.Sentinel)
 
 	// thing wasn't found in the list
 	foundNode := path[len(path)-1].next
@@ -150,6 +163,16 @@ func (lst *LinkedTodoList) Delete(key int) (value interface{}, ok bool) {
 			}
 		}
 	}
+
+	fmt.Println(lst.Sentinel)
+	// check to see if need to delete layers (h = depth - 1)
+	if float64(lst.lengths[depth-1]) < math.Ceil(math.Pow(2.0-lst.epsilon, float64(depth-2))) {
+		fmt.Println("Remove Layer!")
+		lst.removeLayer()
+	}
+
+	fmt.Println(lst.Sentinel)
+	fmt.Println("2" + lst.String())
 
 	// rebalance TODO: WRAP IN FUNCTION
 	// now, do partial rebuliding if there is more than 1 thing in L_0
@@ -282,6 +305,12 @@ func main() {
 	ltl.Delete(7)
 	fmt.Println(ltl)
 	ltl.Insert(7, 7)
+	fmt.Println(ltl)
+	ltl.Delete(7)
+	fmt.Println(ltl)
+	ltl.Delete(8)
+	fmt.Println(ltl)
+	ltl.Delete(9)
 	fmt.Println(ltl)
 	//var m Dict = NewMapSet()
 	//m.Insert(1, "stuff")
