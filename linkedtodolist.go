@@ -112,6 +112,62 @@ func (lst *LinkedTodoList) Search(key int) (value interface{}, ok bool) {
 	}
 }
 
+func (lst *LinkedTodoList) Delete(key int) (value interface{}, ok bool) {
+	path := lst.findPredecessors(key)
+	//depth := len(lst.Sentinel)
+
+	// thing wasn't found in the list
+	foundNode := path[len(path)-1].next
+	if foundNode.key != key {
+		return nil, false
+	}
+
+	successorNode := foundNode.next
+
+	// destroy all the found nodes and add sucessor nodes
+	var prev *TLNode = nil
+	for i := len(path) - 1; i >= 0; i-- {
+		predecessor := path[i]
+
+		// perform deletion
+		if predecessor.next != nil && predecessor.next.key == key {
+			predecessor.next = predecessor.next.next
+			lst.lengths[i] -= 1
+		}
+
+		// now, add in successor where it should be (right after predecessor)
+		if successorNode != nil {
+			// successor node is present
+			if predecessor.next != nil && predecessor.next.key == successorNode.key {
+				prev = predecessor.next
+			} else {
+				// successor node is not present
+				newNode := TLNode{next: predecessor.next, down: prev,
+					key: successorNode.key, elt: successorNode.elt}
+				predecessor.next = &newNode
+				prev = &newNode
+				lst.lengths[i] += 1
+			}
+		}
+	}
+
+	// rebalance TODO: WRAP IN FUNCTION
+	// now, do partial rebuliding if there is more than 1 thing in L_0
+	if lst.lengths[0] > 1 {
+		// first, find the smallest index i such that |L_i| <= (2-ep)^i
+		i := 0
+		for ; float64(lst.lengths[i]) > math.Pow(2.-lst.epsilon, float64(i)); i++ {
+			fmt.Println(i, math.Pow(2.-lst.epsilon, float64(i)))
+		}
+		if float64(lst.lengths[i]) > math.Pow(2.-lst.epsilon, float64(i)) {
+			fmt.Println("Something went wrong! In Insert!")
+		}
+		lst.rebuild(i - 1)
+	}
+	return foundNode.elt, true
+
+}
+
 func (lst *LinkedTodoList) Insert(key int, value interface{}) {
 	path := lst.findPredecessors(key)
 	depth := len(lst.Sentinel)
@@ -221,8 +277,11 @@ func main() {
 	}
 	fmt.Println(ltl.String())
 
-	ltl.Insert(6, 6)
-	ltl.Insert(5, 5)
+	ltl.Delete(3)
+	fmt.Println(ltl)
+	ltl.Delete(7)
+	fmt.Println(ltl)
+	ltl.Insert(7, 7)
 	fmt.Println(ltl)
 	//var m Dict = NewMapSet()
 	//m.Insert(1, "stuff")
