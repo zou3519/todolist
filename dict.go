@@ -17,14 +17,14 @@ type Element struct {
 	// contains filtered or unexported fields
 }
 
-// Set is an interface for data structures that can Insert, Search, and Delete
-type Set interface {
+// Dict is an interface for data structures that can Insert, Search, and Delete
+type Dict interface {
 	// Insert element into the set
 	Insert(Element)
 
-	// Search the set for the element
-	Search(Element)
+	// Search the set for the element.
+	Search(Element) error
 
 	// Delete the element from the set
-	Delete(Element)
+	Delete(Element) error
 }
