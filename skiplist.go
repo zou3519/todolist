@@ -1,6 +1,6 @@
 package main
 
-import(
+import (
 	"fmt"
 	"math"
 	"math/rand"
@@ -9,18 +9,18 @@ import(
 
 // TLNode is a linked list node
 type SLNode struct {
-	next []*SLNode
-	key  int
-	value  interface{}
+	next  []*SLNode
+	key   int
+	value interface{}
 	level int
 }
 
 type SkipList struct {
-	Sentinel *SLNode // head of each linked list
-	maxheight int
-	height    int       // how deep the sentinel is
-	prob 	float64		// probability of promoting an element
-	num_elements int    // number of elements in the skiplist
+	Sentinel     *SLNode // head of each linked list
+	maxheight    int
+	height       int     // how deep the sentinel is
+	prob         float64 // probability of promoting an element
+	num_elements int     // number of elements in the skiplist
 }
 
 func NewSLNode(key int, value interface{}, level int) *SLNode {
@@ -40,7 +40,7 @@ func NewSkipList() *SkipList {
 	sl.maxheight = 16 //appropriate for N <= (1/p)^(sl.maxheight)
 	sl.height = 1
 	// sl.Sentinel = make([]*SLNode, sl.maxheight, sl.maxheight)
-	sl.Sentinel = &SLNode{next: make([]*SLNode, sl.maxheight, sl.maxheight), 
+	sl.Sentinel = &SLNode{next: make([]*SLNode, sl.maxheight, sl.maxheight),
 		key: math.MinInt32, value: math.MinInt32}
 	sl.prob = 0.5
 	sl.num_elements = 0
@@ -52,10 +52,10 @@ func (sl *SkipList) findPredecessors(x int) []*SLNode {
 	height := sl.height
 	result := make([]*SLNode, height, height)
 
-	//result indexing goes top to bottom 
-	result[height - 1] = sl.Sentinel
+	//result indexing goes top to bottom
+	result[height-1] = sl.Sentinel
 	for i := height - 1; i >= 0; i-- {
-		if i < height - 1 {
+		if i < height-1 {
 			result[i] = result[i+1]
 		}
 		for result[i].next[i] != nil && result[i].next[i].key < x {
@@ -81,9 +81,9 @@ func (sl *SkipList) FullSearch(key int) (value interface{}, ok bool) {
 func (sl *SkipList) Search(key int) (value interface{}, ok bool) {
 	height := sl.height
 
-	//result indexing goes top to bottom 
+	//result indexing goes top to bottom
 	current := sl.Sentinel
-	for i := height - 1; i >= 0 ; i-- {
+	for i := height - 1; i >= 0; i-- {
 		for current.next[i] != nil && current.next[i].key <= key {
 			current = current.next[i]
 			if current.key == key {
@@ -103,7 +103,7 @@ func (sl *SkipList) RandLevel() int {
 	return level
 }
 
-func (sl *SkipList) Insert(key int, value interface{}){
+func (sl *SkipList) Insert(key int, value interface{}) {
 	//Can probably generate random numbers faster than this
 	level := sl.RandLevel()
 	fmt.Println("Inserting:", key, "into L", level-1)
@@ -164,7 +164,7 @@ func (sl *SkipList) Delete(key int) (value interface{}, ok bool) {
 		return x.value, true
 	} else {
 		return nil, false
-	}	
+	}
 }
 
 func (sl *SkipList) String() string {
@@ -229,18 +229,17 @@ func (sl *SkipList) test_delete(items []int) {
 	return
 }
 
-func main() {
-	fmt.Printf("Hello, world!\n")
+// func main() {
+// 	fmt.Printf("Hello, world!\n")
 
-	sl := NewSkipList()
-	sl.test_insert([]int{0, 8, 9, 1, 7, -5, 11, 4, 3, 5, 10, 2, 6})
-	fmt.Printf("Inserting done\n")
+// 	sl := NewSkipList()
+// 	sl.test_insert([]int{0, 8, 9, 1, 7, -5, 11, 4, 3, 5, 10, 2, 6})
+// 	fmt.Printf("Inserting done\n")
 
-	sl.test_search([]int{4, 5, 6, -1, 12, -5})
-	fmt.Printf("Searching done\n")
+// 	sl.test_search([]int{4, 5, 6, -1, 12, -5})
+// 	fmt.Printf("Searching done\n")
 
-	sl.test_delete([]int{3, 7, 8, 9, 6, -1, 0})
-	fmt.Printf("Deleting done\n")
+// 	sl.test_delete([]int{3, 7, 8, 9, 6, -1, 0})
+// 	fmt.Printf("Deleting done\n")
 
-
-}
+// }
