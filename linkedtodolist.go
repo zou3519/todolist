@@ -118,8 +118,9 @@ func (lst *LinkedTodoList) removeLayer() {
 func (lst *LinkedTodoList) Search(key int) (value interface{}, ok bool) {
 	path := lst.findPredecessors(key)
 	uh := path[len(path)-1]
-	if uh.next.key == key {
-		return uh.next.elt, true
+	nextGuy := uh.next
+	if nextGuy.key == key {
+		return nextGuy.elt, true
 	} else {
 		return nil, false
 	}
@@ -131,7 +132,7 @@ func (lst *LinkedTodoList) Delete(key int) (value interface{}, ok bool) {
 
 	// thing wasn't found in the list
 	foundNode := path[len(path)-1].next
-	if foundNode.key != key {
+	if foundNode == nil || foundNode.key != key {
 		return nil, false
 	}
 
