@@ -16,7 +16,7 @@ type Number struct {
 }
 
 func NewLLRB() *LLRB {
-	return &LLRB{}
+	return &LLRB{tree: llrb.New()}
 }
 
 func (a Number) Less(b llrb.Item) bool { return a.nkey < b.(Number).nkey }
@@ -37,7 +37,7 @@ func (t *LLRB) Delete(key int) (interface{}, bool) {
 		found = true
 	}
 	return item_got.(Number).nval, found
-} 
+}
 
 func (t *LLRB) Insert(key int, value interface{}) {
 	t.tree.ReplaceOrInsert(Number{nkey: key, nval: value.(int)})
