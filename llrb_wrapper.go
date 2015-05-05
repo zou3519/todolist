@@ -1,8 +1,6 @@
 package main
 
 import (
-	// "llrb"
-	// "github.com/zou3519/llrb"
 	"github.com/petar/GoLLRB/llrb"
 )
 
@@ -12,7 +10,7 @@ type LLRB struct {
 
 type Number struct {
 	nkey int
-	nval int
+	nval interface{}
 }
 
 func NewLLRB() *LLRB {
@@ -22,25 +20,23 @@ func NewLLRB() *LLRB {
 func (a Number) Less(b llrb.Item) bool { return a.nkey < b.(Number).nkey }
 
 func (t *LLRB) Search(key int) (interface{}, bool) {
-	var found bool
 	item_got := t.tree.Get(Number{nkey: key, nval: 0})
-	if item_got != nil {
-		found = true
+	if item_got == nil {
+		return nil, false
 	}
-	return item_got.(Number).nval, found
+	return item_got.(Number).nval, true
 }
 
 func (t *LLRB) Delete(key int) (interface{}, bool) {
-	var found bool
 	item_got := t.tree.Delete(Number{nkey: key, nval: 0})
-	if item_got != nil {
-		found = true
+	if item_got == nil {
+		return nil, false
 	}
-	return item_got.(Number).nval, found
+	return item_got.(Number).nval, true
 }
 
 func (t *LLRB) Insert(key int, value interface{}) {
-	t.tree.ReplaceOrInsert(Number{nkey: key, nval: value.(int)})
+	t.tree.ReplaceOrInsert(Number{nkey: key, nval: value})
 	return
 }
 
