@@ -89,4 +89,19 @@ func benchmarkRandomDelete(d Dict, n int, b *testing.B) {
 			d.Delete(a2[j])
 		}
 	}
+
+func TodoListBuilder() Dict {
+	return NewTodoList()
+}
+
+func Test_TodoList_Insert(t *testing.T) {
+	GenericInsertTest(t, TodoListBuilder)
+}
+
+func Test_TodoList_Search(t *testing.T) {
+	GenericSearchTest(t, TodoListBuilder)
+}
+
+func Test_TodoList_Delete(t *testing.T) {
+	GenericDeleteTest(t, TodoListBuilder)
 }
