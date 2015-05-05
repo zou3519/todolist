@@ -12,8 +12,6 @@ import (
 
 // rand.Seed(time.Now().UTC().UnixNano())
 
-
-
 func benchmarkRandomPerm(n int, b *testing.B) {
 	rand.Perm(n)
 }
@@ -59,8 +57,6 @@ func benchmarkRandomInsert(d Dict, n int, b *testing.B) {
 	}
 }
 
-
-
 func benchmarkRandomSearch(d Dict, n int, b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
@@ -89,6 +85,7 @@ func benchmarkRandomDelete(d Dict, n int, b *testing.B) {
 			d.Delete(a2[j])
 		}
 	}
+}
 
 func TodoListBuilder() Dict {
 	return NewTodoList()
