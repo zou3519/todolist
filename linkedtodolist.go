@@ -266,49 +266,49 @@ func (lst *LinkedTodoList) String() string {
 	return result
 }
 
-func main() {
-	fmt.Printf("Hello, world!\n")
+// func main() {
+// 	fmt.Printf("Hello, world!\n")
 
-	ltl := NewLinkedTodoList()
+// 	ltl := NewLinkedTodoList()
 
-	ltl.Insert(8, 8)
-	ltl.Insert(9, 9)
-	ltl.Insert(1, 1)
-	ltl.Insert(7, 7)
-	ltl.Insert(11, 11)
-	ltl.Insert(4, 4)
-	ltl.Insert(3, 3)
+// 	ltl.Insert(8, 8)
+// 	ltl.Insert(9, 9)
+// 	ltl.Insert(1, 1)
+// 	ltl.Insert(7, 7)
+// 	ltl.Insert(11, 11)
+// 	ltl.Insert(4, 4)
+// 	ltl.Insert(3, 3)
 
-	a, ok := ltl.Search(4)
-	if ok {
-		fmt.Println("Search returned", a)
-	} else {
-		fmt.Println("Alert!")
-	}
-	a, ok = ltl.Search(5)
-	if !ok {
-		fmt.Println("Search did not return")
-	} else {
-		fmt.Println("Alert!")
-	}
-	fmt.Println(ltl.String())
+// 	a, ok := ltl.Search(4)
+// 	if ok {
+// 		fmt.Println("Search returned", a)
+// 	} else {
+// 		fmt.Println("Alert!")
+// 	}
+// 	a, ok = ltl.Search(5)
+// 	if !ok {
+// 		fmt.Println("Search did not return")
+// 	} else {
+// 		fmt.Println("Alert!")
+// 	}
+// 	fmt.Println(ltl.String())
 
-	ltl.Delete(3)
-	fmt.Println(ltl)
-	ltl.Delete(7)
-	fmt.Println(ltl)
-	ltl.Insert(7, 7)
-	fmt.Println(ltl)
-	ltl.Delete(7)
-	fmt.Println(ltl)
-	ltl.Delete(8)
-	fmt.Println(ltl)
-	ltl.Delete(9)
-	fmt.Println(ltl)
-	// var m Dict = NewMapSet()
-	//m.Insert(1, "stuff")
-	//fmt.Println(m)
+// 	ltl.Delete(3)
+// 	fmt.Println(ltl)
+// 	ltl.Delete(7)
+// 	fmt.Println(ltl)
+// 	ltl.Insert(7, 7)
+// 	fmt.Println(ltl)
+// 	ltl.Delete(7)
+// 	fmt.Println(ltl)
+// 	ltl.Delete(8)
+// 	fmt.Println(ltl)
+// 	ltl.Delete(9)
+// 	fmt.Println(ltl)
+// 	// var m Dict = NewMapSet()
+// 	//m.Insert(1, "stuff")
+// 	//fmt.Println(m)
 
-	var _ Dict = NewLLRB()
+// 	var _ Dict = NewLLRB()
 
-}
+// }
