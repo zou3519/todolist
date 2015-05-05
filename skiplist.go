@@ -27,9 +27,8 @@ func NewSLNode(key int, value interface{}, level int) *SLNode {
 	node := SLNode{}
 	node.key = key
 	node.value = value
-	//HARD-CODED - WHATT????
 	node.level = level
-	node.next = make([]*SLNode, level, 16)
+	node.next = make([]*SLNode, level)
 	return &node
 }
 
@@ -37,7 +36,9 @@ func NewSkipList() *SkipList {
 	rand.Seed(time.Now().UTC().UnixNano())
 
 	sl := SkipList{}
-	sl.maxheight = 16 //appropriate for N <= (1/p)^(sl.maxheight)
+	// sl.maxheight = int(math.Log2(math.Pow(10, 8))) //appropriate for N <= (1/p)^(sl.maxheight)
+	sl.maxheight = 32
+	fmt.Println(sl.maxheight)
 	sl.height = 1
 	// sl.Sentinel = make([]*SLNode, sl.maxheight, sl.maxheight)
 	sl.Sentinel = &SLNode{next: make([]*SLNode, sl.maxheight, sl.maxheight),
@@ -106,9 +107,10 @@ func (sl *SkipList) RandLevel() int {
 func (sl *SkipList) Insert(key int, value interface{}) {
 	//Can probably generate random numbers faster than this
 	level := sl.RandLevel()
-	fmt.Println("Inserting:", key, "into L", level-1)
+	// fmt.Println("Inserting:", key, "into L", level-1)
 	if level > sl.maxheight {
 		fmt.Println("OH NOES, it's too high!!!!")
+		level = sl.maxheight
 	}
 	if level > sl.height {
 		sl.height = level
@@ -141,7 +143,7 @@ func (sl *SkipList) Insert(key int, value interface{}) {
 }
 
 func (sl *SkipList) Delete(key int) (value interface{}, ok bool) {
-	fmt.Println("Deleting:", key)
+	// fmt.Println("Deleting:", key)
 
 	//splice key into the skiplist
 	preds := sl.findPredecessors(key)
@@ -199,18 +201,19 @@ func (sl *SkipList) String() string {
 func (sl *SkipList) test_insert(items []int) {
 	for i := 0; i < len(items); i++ {
 		sl.Insert(items[i], items[i])
-		fmt.Println(sl)
+		// fmt.Println(sl)
 	}
 	return
 }
 
 func (sl *SkipList) test_search(items []int) {
+	fmt.Println(sl.height)
 	for i := 0; i < len(items); i++ {
 		a, ok := sl.Search(items[i])
 		if ok {
-			fmt.Println("Found:", a)
+			// fmt.Println("Found:", a)
 		} else {
-			fmt.Println("Couldn't find", items[i], "!")
+			fmt.Println("Couldn't find", items[i], "!", a)
 		}
 	}
 	return
@@ -220,10 +223,10 @@ func (sl *SkipList) test_delete(items []int) {
 	for i := 0; i < len(items); i++ {
 		a, ok := sl.Delete(items[i])
 		if ok {
-			fmt.Println("Deleted:", a)
-			fmt.Println(sl)
+			// fmt.Println("Deleted:", a)
+			// fmt.Println(sl)
 		} else {
-			fmt.Println("Couldn't delete", items[i], "!")
+			fmt.Println("Couldn't delete", items[i], "!", a)
 		}
 	}
 	return
@@ -233,13 +236,18 @@ func (sl *SkipList) test_delete(items []int) {
 // 	fmt.Printf("Hello, world!\n")
 
 // 	sl := NewSkipList()
-// 	sl.test_insert([]int{0, 8, 9, 1, 7, -5, 11, 4, 3, 5, 10, 2, 6})
+// 	a := rand.Perm(1000000)
+// 	sl.test_insert(a)
 // 	fmt.Printf("Inserting done\n")
 
-// 	sl.test_search([]int{4, 5, 6, -1, 12, -5})
+// 	sl.test_search(a)
 // 	fmt.Printf("Searching done\n")
 
-// 	sl.test_delete([]int{3, 7, 8, 9, 6, -1, 0})
+// 	sl.test_delete(a)
 // 	fmt.Printf("Deleting done\n")
+
+// 	b := rand.Perm(10)
+// 	c := rand.Perm(10)
+// 	fmt.Println(b, c)
 
 // }
