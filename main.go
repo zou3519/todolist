@@ -2,21 +2,25 @@ package main
 
 import (
 	"fmt"
-	_ "math/rand"
+	"math/rand"
 	"time"
 )
 
 func main() {
-	nums := []int{92, 4, 2, 49, 47, 32, 90, 95, 35, 85, 41} // rand.Perm(100)
+	rand.Seed(time.Now().UTC().UnixNano())
+
+	nums := rand.Perm(100000)
 	start := time.Now()
 
-	var d Dict = NewTodoList()
+	var d Dict = NewLinkedTodoList()
 	for _, v := range nums {
-		fmt.Println("Inserting", v)
+		//fmt.Println("Inserting", v)
 		d.Insert(v, v)
-		fmt.Println(d.String())
+		//fmt.Println(d.String())
+		//fmt.Println(d.(*TodoList).DebugString())
 	}
 
 	elapsed := time.Since(start)
-	fmt.Println("Took: %s", elapsed)
+	fmt.Printf("Took: %s\n", elapsed)
+	// fmt.Println(d.String())
 }

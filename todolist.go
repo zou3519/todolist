@@ -149,10 +149,7 @@ func (tl *TodoList) fixFirstLayer() {
 	// first, find the smallest index i such that |L_i| <= (2-ep)^i
 	i := 0
 	for ; float64(tl.lengths[i]) > math.Pow(2.-tl.epsilon, float64(i)); i++ {
-		// fmt.Println(tl.lengths[i], math.Pow(2.-tl.epsilon, float64(i)))
-	}
-	if float64(tl.lengths[i]) > math.Pow(2.-tl.epsilon, float64(i)) {
-		fmt.Println("Something went wrong! In Insert!")
+		// fmt.Println(i, tl.lengths[i], math.Pow(2.-tl.epsilon, float64(i)))
 	}
 	tl.rebuild(i - 1)
 }
@@ -179,7 +176,7 @@ func (tl *TodoList) Insert(key int, value interface{}) {
 	}
 
 	// rebalancing condition
-	if float64(tl.lengths[height]) > math.Ceil(math.Pow(2.0-tl.epsilon, float64(height))) {
+	if float64(tl.lengths[height]) >= math.Ceil(math.Pow(2.0-tl.epsilon, float64(height))) {
 		// fmt.Println("New Layer!")
 		tl.newLayer()
 	}
@@ -249,6 +246,18 @@ func (tl *TodoList) Delete(key int) (value interface{}, ok bool) {
 	return foundNode.value, true
 }
 
+func (tl *TodoList) DebugString() string {
+	result := "TodoList (debug view)\n"
+	// for each L_i, print out stuff
+	for i := 0; i <= tl.height; i++ {
+		build := fmt.Sprintf("L[%2d]--", i)
+		for node := tl.Sentinel.Next(i); node != nil; node = node.Next(i) {
+			build += fmt.Sprintf("%v--", node.key)
+		}
+		result += build + fmt.Sprintf(" (%v)", tl.lengths[i]) + "\n"
+	}
+	return result
+}
 func (tl *TodoList) String() string {
 	result := "TodoList\n"
 	keys := make([]int, tl.n)

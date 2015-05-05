@@ -204,7 +204,7 @@ func (lst *LinkedTodoList) Insert(key int, value interface{}) {
 	}
 
 	// check to see if need to add more layers
-	if float64(lst.lengths[depth-1]) > math.Ceil(math.Pow(2.0-lst.epsilon, float64(depth-1))) {
+	if float64(lst.lengths[depth-1]) >= math.Ceil(math.Pow(2.0-lst.epsilon, float64(depth-1))) {
 		// fmt.Println("New Layer!")
 		lst.newLayer()
 	}
