@@ -45,11 +45,11 @@ func (node *TNode) SetNext(i int, next *TNode) {
 	}
 	node.next[node.tl.height-i] = next
 
-	txt := "nil"
-	if next != nil {
-		txt = fmt.Sprintf("%v", next.key)
-	}
-	fmt.Printf("L[%v]: %v -> %v created\n", i, node.key, txt)
+	// txt := "nil"
+	// if next != nil {
+	// 	txt = fmt.Sprintf("%v", next.key)
+	// }
+	// fmt.Printf("L[%v]: %v -> %v created\n", i, node.key, txt)
 }
 
 // findPredecessors returns a list of *TLNodes that immediately proceed
@@ -149,7 +149,7 @@ func (tl *TodoList) fixFirstLayer() {
 	// first, find the smallest index i such that |L_i| <= (2-ep)^i
 	i := 0
 	for ; float64(tl.lengths[i]) > math.Pow(2.-tl.epsilon, float64(i)); i++ {
-		fmt.Println(tl.lengths[i], math.Pow(2.-tl.epsilon, float64(i)))
+		// fmt.Println(tl.lengths[i], math.Pow(2.-tl.epsilon, float64(i)))
 	}
 	if float64(tl.lengths[i]) > math.Pow(2.-tl.epsilon, float64(i)) {
 		fmt.Println("Something went wrong! In Insert!")
@@ -180,13 +180,13 @@ func (tl *TodoList) Insert(key int, value interface{}) {
 
 	// rebalancing condition
 	if float64(tl.lengths[height]) > math.Ceil(math.Pow(2.0-tl.epsilon, float64(height))) {
-		fmt.Println("New Layer!")
+		// fmt.Println("New Layer!")
 		tl.newLayer()
 	}
 
 	// now, do partial rebuilding if there is more than 1 thing in L_0
 	if tl.lengths[0] > 1 {
-		fmt.Println("Rebuild L_0 cond!")
+		// fmt.Println("Rebuild L_0 cond!")
 		tl.fixFirstLayer()
 	}
 }
@@ -283,67 +283,67 @@ func (tl *TodoList) String() string {
 	return result
 }
 
-func main() {
-	fmt.Printf("Hello, world!\n")
+// func main() {
+// 	fmt.Printf("Hello, world!\n")
 
-	tl := NewTodoList()
-	fmt.Println(tl.String())
-	// tl.Insert(0, 1)
-	// fmt.Println(tl.String())
-	// tl.Insert(2, 1)
-	// fmt.Println(tl.String())
-	// tl.Insert(3, 1)
-	// fmt.Println(tl.String())
-	// tl.Insert(4, 4)
-	// fmt.Println(tl.String())
-	// tl.Insert(5, 1)
-	// fmt.Println(tl.String())
-	// tl.Insert(6, 1)
-	// fmt.Println(tl.String())
-	// tl.Insert(7, 1)
-	// fmt.Println(tl.String())
-	// tl.Delete(6)
-	// fmt.Println(tl.String())
-	// tl.Delete(5)
-	// fmt.Println(tl.String())
-	// tl.Delete(7)
-	// fmt.Println(tl.String())
-	// tl.Delete(1)
-	// fmt.Println(tl.String())
-	// tl.Delete(0)
-	// fmt.Println(tl.String())
+// 	tl := NewTodoList()
+// 	fmt.Println(tl.String())
+// 	// tl.Insert(0, 1)
+// 	// fmt.Println(tl.String())
+// 	// tl.Insert(2, 1)
+// 	// fmt.Println(tl.String())
+// 	// tl.Insert(3, 1)
+// 	// fmt.Println(tl.String())
+// 	// tl.Insert(4, 4)
+// 	// fmt.Println(tl.String())
+// 	// tl.Insert(5, 1)
+// 	// fmt.Println(tl.String())
+// 	// tl.Insert(6, 1)
+// 	// fmt.Println(tl.String())
+// 	// tl.Insert(7, 1)
+// 	// fmt.Println(tl.String())
+// 	// tl.Delete(6)
+// 	// fmt.Println(tl.String())
+// 	// tl.Delete(5)
+// 	// fmt.Println(tl.String())
+// 	// tl.Delete(7)
+// 	// fmt.Println(tl.String())
+// 	// tl.Delete(1)
+// 	// fmt.Println(tl.String())
+// 	// tl.Delete(0)
+// 	// fmt.Println(tl.String())
 
-	tl.Insert(1, 1)
-	tl.Insert(2, 1)
-	tl.Insert(3, 1)
-	tl.Insert(4, 1)
-	tl.Insert(5, 1)
-	tl.Insert(6, 1)
-	tl.Insert(7, 1)
-	tl.Insert(8, 1)
-	tl.Insert(9, 1)
-	tl.Insert(10, 1)
-	fmt.Println(tl)
-	tl.Delete(3)
-	fmt.Println(tl)
-	tl.Delete(2)
-	fmt.Println(tl)
-	tl.Delete(8)
-	fmt.Println(tl)
-	tl.Delete(10)
-	fmt.Println(tl)
+// 	tl.Insert(1, 1)
+// 	tl.Insert(2, 1)
+// 	tl.Insert(3, 1)
+// 	tl.Insert(4, 1)
+// 	tl.Insert(5, 1)
+// 	tl.Insert(6, 1)
+// 	tl.Insert(7, 1)
+// 	tl.Insert(8, 1)
+// 	tl.Insert(9, 1)
+// 	tl.Insert(10, 1)
+// 	fmt.Println(tl)
+// 	tl.Delete(3)
+// 	fmt.Println(tl)
+// 	tl.Delete(2)
+// 	fmt.Println(tl)
+// 	tl.Delete(8)
+// 	fmt.Println(tl)
+// 	tl.Delete(10)
+// 	fmt.Println(tl)
 
-	// a, ok := tl.Search(4)
-	// if ok {
-	// 	fmt.Println("Search returned", a)
-	// } else {
-	// 	fmt.Println("Alert!")
-	// }
-	// a, ok = tl.Search(8)
-	// if !ok {
-	// 	fmt.Println("Search did not return")
-	// } else {
-	// 	fmt.Println("Alert!")
-	// }
-	// fmt.Println(tl.String())
-}
+// 	// a, ok := tl.Search(4)
+// 	// if ok {
+// 	// 	fmt.Println("Search returned", a)
+// 	// } else {
+// 	// 	fmt.Println("Alert!")
+// 	// }
+// 	// a, ok = tl.Search(8)
+// 	// if !ok {
+// 	// 	fmt.Println("Search did not return")
+// 	// } else {
+// 	// 	fmt.Println("Alert!")
+// 	// }
+// 	// fmt.Println(tl.String())
+// }
