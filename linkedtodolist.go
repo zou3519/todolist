@@ -312,7 +312,10 @@ func main() {
 	fmt.Println(ltl)
 	ltl.Delete(9)
 	fmt.Println(ltl)
-	//var m Dict = NewMapSet()
+	// var m Dict = NewMapSet()
 	//m.Insert(1, "stuff")
 	//fmt.Println(m)
+
+	var _ Dict = NewLLRB()
+
 }
