@@ -39,13 +39,10 @@ func (lst *LinkedTodoList) findPredecessors(x int) []*TLNode {
 	for i := 0; i < depth; i++ {
 		if result[i].next != nil && result[i].next.key < x {
 			result[i] = result[i].next
-			fmt.Print("new result: ")
-			fmt.Println(result[i], result[i].key, i)
 		}
 		if result[i] != nil && result[i].down != nil {
 			result[i+1] = result[i].down
 		}
-		fmt.Println(result, i, result[i])
 	}
 	return result
 }
@@ -98,7 +95,6 @@ func (lst *LinkedTodoList) newLayer() {
 
 	lst.Sentinel = append(lst.Sentinel, uold)
 	lst.lengths = append(lst.lengths, lst.lengths[depth-1])
-	fmt.Println(lst.Sentinel)
 	lst.rebuild(depth - 1)
 }
 
@@ -165,15 +161,11 @@ func (lst *LinkedTodoList) Delete(key int) (value interface{}, ok bool) {
 		}
 	}
 
-	fmt.Println(lst.Sentinel)
 	// check to see if need to delete layers (h = depth - 1)
 	if float64(lst.lengths[depth-1]) < math.Ceil(math.Pow(2.0-lst.epsilon, float64(depth-2))) {
 		fmt.Println("Remove Layer!")
 		lst.removeLayer()
 	}
-
-	fmt.Println(lst.Sentinel)
-	fmt.Println("2" + lst.String())
 
 	// rebalance TODO: WRAP IN FUNCTION
 	// now, do partial rebuliding if there is more than 1 thing in L_0
@@ -181,7 +173,7 @@ func (lst *LinkedTodoList) Delete(key int) (value interface{}, ok bool) {
 		// first, find the smallest index i such that |L_i| <= (2-ep)^i
 		i := 0
 		for ; float64(lst.lengths[i]) > math.Pow(2.-lst.epsilon, float64(i)); i++ {
-			fmt.Println(i, math.Pow(2.-lst.epsilon, float64(i)))
+			// fmt.Println(i, math.Pow(2.-lst.epsilon, float64(i)))
 		}
 		if float64(lst.lengths[i]) > math.Pow(2.-lst.epsilon, float64(i)) {
 			fmt.Println("Something went wrong! In Insert!")
@@ -211,23 +203,18 @@ func (lst *LinkedTodoList) Insert(key int, value interface{}) {
 		lst.lengths[i] += 1 // increase length count by 1
 	}
 
-	fmt.Println("1" + lst.String())
-
 	// check to see if need to add more layers
-	if float64(lst.lengths[depth-1]) > math.Ceil(math.Pow(2.0-lst.epsilon, float64(depth-1))) {
-		fmt.Println("New Layer!")
+	if float64(lst.lengths[depth-1]) >= math.Ceil(math.Pow(2.0-lst.epsilon, float64(depth-1))) {
+		// fmt.Println("New Layer!")
 		lst.newLayer()
 	}
-
-	fmt.Println(lst.Sentinel)
-	fmt.Println("2" + lst.String())
 
 	// now, do partial rebuliding if there is more than 1 thing in L_0
 	if lst.lengths[0] > 1 {
 		// first, find the smallest index i such that |L_i| <= (2-ep)^i
 		i := 0
 		for ; float64(lst.lengths[i]) > math.Pow(2.-lst.epsilon, float64(i)); i++ {
-			fmt.Println(i, math.Pow(2.-lst.epsilon, float64(i)))
+			// fmt.Println(i, math.Pow(2.-lst.epsilon, float64(i)))
 		}
 		if float64(lst.lengths[i]) > math.Pow(2.-lst.epsilon, float64(i)) {
 			fmt.Println("Something went wrong! In Insert!")
@@ -245,7 +232,7 @@ func (lst *LinkedTodoList) String() string {
 
 	for i := depth - 1; i >= 0; i-- {
 		ui := lst.Sentinel[i]
-		str := fmt.Sprintf("L[%v]--", i)
+		str := fmt.Sprintf("L[%2d]--", i)
 
 		if i == depth-1 {
 			count := 0
@@ -260,63 +247,68 @@ func (lst *LinkedTodoList) String() string {
 			// keys[count] = j.key
 
 			if j != nil && j.key == keys[count] {
-				str += fmt.Sprintf("%v--", j.key)
+				str += fmt.Sprintf("%d--", j.key)
 				j = j.next
 			} else {
-				str += "_--"
+				// create string with digits equal to the number of digits in v
+				digits := int(math.Floor(math.Log10(float64(keys[count])))) + 1
+				for c := 0; c < digits; c++ {
+					str += " "
+				}
+				str += "--"
 			}
 		}
 
-		result = str + "\n" + result
+		result = str + fmt.Sprintf(" (%d)", lst.lengths[i]) + "\n" + result
 	}
 
 	result = "LinkedTodoList\n" + result
 	return result
 }
 
-func main() {
-	fmt.Printf("Hello, world!\n")
+// func main() {
+// 	fmt.Printf("Hello, world!\n")
 
-	ltl := NewLinkedTodoList()
+// 	ltl := NewLinkedTodoList()
 
-	ltl.Insert(8, 8)
-	ltl.Insert(9, 9)
-	ltl.Insert(1, 1)
-	ltl.Insert(7, 7)
-	ltl.Insert(11, 11)
-	ltl.Insert(4, 4)
-	ltl.Insert(3, 3)
+// 	ltl.Insert(8, 8)
+// 	ltl.Insert(9, 9)
+// 	ltl.Insert(1, 1)
+// 	ltl.Insert(7, 7)
+// 	ltl.Insert(11, 11)
+// 	ltl.Insert(4, 4)
+// 	ltl.Insert(3, 3)
 
-	a, ok := ltl.Search(4)
-	if ok {
-		fmt.Println("Search returned", a)
-	} else {
-		fmt.Println("Alert!")
-	}
-	a, ok = ltl.Search(5)
-	if !ok {
-		fmt.Println("Search did not return")
-	} else {
-		fmt.Println("Alert!")
-	}
-	fmt.Println(ltl.String())
+// 	a, ok := ltl.Search(4)
+// 	if ok {
+// 		fmt.Println("Search returned", a)
+// 	} else {
+// 		fmt.Println("Alert!")
+// 	}
+// 	a, ok = ltl.Search(5)
+// 	if !ok {
+// 		fmt.Println("Search did not return")
+// 	} else {
+// 		fmt.Println("Alert!")
+// 	}
+// 	fmt.Println(ltl.String())
 
-	ltl.Delete(3)
-	fmt.Println(ltl)
-	ltl.Delete(7)
-	fmt.Println(ltl)
-	ltl.Insert(7, 7)
-	fmt.Println(ltl)
-	ltl.Delete(7)
-	fmt.Println(ltl)
-	ltl.Delete(8)
-	fmt.Println(ltl)
-	ltl.Delete(9)
-	fmt.Println(ltl)
-	// var m Dict = NewMapSet()
-	//m.Insert(1, "stuff")
-	//fmt.Println(m)
+// 	ltl.Delete(3)
+// 	fmt.Println(ltl)
+// 	ltl.Delete(7)
+// 	fmt.Println(ltl)
+// 	ltl.Insert(7, 7)
+// 	fmt.Println(ltl)
+// 	ltl.Delete(7)
+// 	fmt.Println(ltl)
+// 	ltl.Delete(8)
+// 	fmt.Println(ltl)
+// 	ltl.Delete(9)
+// 	fmt.Println(ltl)
+// 	// var m Dict = NewMapSet()
+// 	//m.Insert(1, "stuff")
+// 	//fmt.Println(m)
 
-	var _ Dict = NewLLRB()
+// 	var _ Dict = NewLLRB()
 
-}
+// }

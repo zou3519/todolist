@@ -44,6 +44,12 @@ func (node *TNode) SetNext(i int, next *TNode) {
 		}
 	}
 	node.next[node.tl.height-i] = next
+
+	// txt := "nil"
+	// if next != nil {
+	// 	txt = fmt.Sprintf("%v", next.key)
+	// }
+	// fmt.Printf("L[%v]: %v -> %v created\n", i, node.key, txt)
 }
 
 // findPredecessors returns a list of *TLNodes that immediately proceed
@@ -73,14 +79,20 @@ func (tl *TodoList) rebuildLayer(i int) {
 	// reference layer
 	referenceNode := tl.Sentinel.Next(i + 1)
 	iNode := &tl.Sentinel
-	iNode.SetNext(i, nil) // delete everything after
+
+	// delete the connections in the current layer
+	for node := iNode; node != nil; {
+		next := node.Next(i)
+		node.SetNext(i, nil)
+		node = next
+	}
 
 	second := false
 	for node := referenceNode; node != nil; node = node.Next(i + 1) {
+		// if we're a second thing, then build
 		if second == true {
 			iNode.SetNext(i, node)
 			iNode = node
-			iNode.SetNext(i, nil) // reset
 			length++
 		}
 		second = !second
@@ -137,10 +149,7 @@ func (tl *TodoList) fixFirstLayer() {
 	// first, find the smallest index i such that |L_i| <= (2-ep)^i
 	i := 0
 	for ; float64(tl.lengths[i]) > math.Pow(2.-tl.epsilon, float64(i)); i++ {
-		fmt.Println(tl.lengths[i], math.Pow(2.-tl.epsilon, float64(i)))
-	}
-	if float64(tl.lengths[i]) > math.Pow(2.-tl.epsilon, float64(i)) {
-		fmt.Println("Something went wrong! In Insert!")
+		// fmt.Println(i, tl.lengths[i], math.Pow(2.-tl.epsilon, float64(i)))
 	}
 	tl.rebuild(i - 1)
 }
@@ -167,14 +176,14 @@ func (tl *TodoList) Insert(key int, value interface{}) {
 	}
 
 	// rebalancing condition
-	if float64(tl.lengths[height]) > math.Ceil(math.Pow(2.0-tl.epsilon, float64(height))) {
-		fmt.Println("New Layer!")
+	if float64(tl.lengths[height]) >= math.Ceil(math.Pow(2.0-tl.epsilon, float64(height))) {
+		// fmt.Println("New Layer!")
 		tl.newLayer()
 	}
 
 	// now, do partial rebuilding if there is more than 1 thing in L_0
 	if tl.lengths[0] > 1 {
-		fmt.Println("Rebuild L_0 cond!")
+		// fmt.Println("Rebuild L_0 cond!")
 		tl.fixFirstLayer()
 	}
 }
@@ -198,13 +207,14 @@ func (tl *TodoList) Delete(key int) (value interface{}, ok bool) {
 	for i := 0; i <= height; i++ {
 		predecessor := path[i]
 
-		// set the successor
+		// tNext may or may not be the found node
 		tNext := predecessor.Next(i)
-		predecessor.SetNext(i, successorNode)
 
-		// figure out whether or not to decrement or add for the number
+		// figure out chaining for L_0
 		if tNext != nil && tNext.key == key {
-			tl.lengths[i] -= 1
+			// if tNext is the found node, predecessor.next = tNext.next
+			predecessor.SetNext(i, successorNode)
+			tl.lengths[i] -= 1 // decrement by 1, found node is removed
 
 			// make the successor appear
 			tNextNext := tNext.Next(i)
@@ -212,8 +222,10 @@ func (tl *TodoList) Delete(key int) (value interface{}, ok bool) {
 				successorNode.SetNext(i, tNextNext)
 				tl.lengths[i] += 1
 			}
-		}
-		if tNext == nil {
+		} else if tNext != nil && tNext.key != successorNode.key {
+			successorNode.SetNext(i, tNext)
+			tl.lengths[i] += 1
+		} else if tNext == nil {
 			tl.lengths[i] += 1
 		}
 
@@ -234,6 +246,18 @@ func (tl *TodoList) Delete(key int) (value interface{}, ok bool) {
 	return foundNode.value, true
 }
 
+func (tl *TodoList) DebugString() string {
+	result := "TodoList (debug view)\n"
+	// for each L_i, print out stuff
+	for i := 0; i <= tl.height; i++ {
+		build := fmt.Sprintf("L[%2d]--", i)
+		for node := tl.Sentinel.Next(i); node != nil; node = node.Next(i) {
+			build += fmt.Sprintf("%v--", node.key)
+		}
+		result += build + fmt.Sprintf(" (%v)", tl.lengths[i]) + "\n"
+	}
+	return result
+}
 func (tl *TodoList) String() string {
 	result := "TodoList\n"
 	keys := make([]int, tl.n)
@@ -251,9 +275,14 @@ func (tl *TodoList) String() string {
 		node := tl.Sentinel.Next(i)
 		for _, v := range keys {
 			if node == nil || v != node.key {
-				build += "   --"
+				// create string with digits equal to the number of digits in v
+				digits := int(math.Floor(math.Log10(float64(v)))) + 1
+				for c := 0; c < digits; c++ {
+					build += " "
+				}
+				build += "--"
 			} else {
-				build += fmt.Sprintf("%3d--", v)
+				build += fmt.Sprintf("%d--", v)
 				node = node.Next(i)
 			}
 		}
@@ -263,47 +292,67 @@ func (tl *TodoList) String() string {
 	return result
 }
 
-func main() {
-	fmt.Printf("Hello, world!\n")
+// func main() {
+// 	fmt.Printf("Hello, world!\n")
 
-	tl := NewTodoList()
-	fmt.Println(tl.String())
-	tl.Insert(0, 1)
-	fmt.Println(tl.String())
-	tl.Insert(2, 1)
-	fmt.Println(tl.String())
-	tl.Insert(3, 1)
-	fmt.Println(tl.String())
-	tl.Insert(4, 4)
-	fmt.Println(tl.String())
-	tl.Insert(5, 1)
-	fmt.Println(tl.String())
-	tl.Insert(6, 1)
-	fmt.Println(tl.String())
-	tl.Insert(7, 1)
-	fmt.Println(tl.String())
-	tl.Delete(6)
-	fmt.Println(tl.String())
-	tl.Delete(5)
-	fmt.Println(tl.String())
-	tl.Delete(7)
-	fmt.Println(tl.String())
-	tl.Delete(1)
-	fmt.Println(tl.String())
-	tl.Delete(0)
-	fmt.Println(tl.String())
+// 	tl := NewTodoList()
+// 	fmt.Println(tl.String())
+// 	// tl.Insert(0, 1)
+// 	// fmt.Println(tl.String())
+// 	// tl.Insert(2, 1)
+// 	// fmt.Println(tl.String())
+// 	// tl.Insert(3, 1)
+// 	// fmt.Println(tl.String())
+// 	// tl.Insert(4, 4)
+// 	// fmt.Println(tl.String())
+// 	// tl.Insert(5, 1)
+// 	// fmt.Println(tl.String())
+// 	// tl.Insert(6, 1)
+// 	// fmt.Println(tl.String())
+// 	// tl.Insert(7, 1)
+// 	// fmt.Println(tl.String())
+// 	// tl.Delete(6)
+// 	// fmt.Println(tl.String())
+// 	// tl.Delete(5)
+// 	// fmt.Println(tl.String())
+// 	// tl.Delete(7)
+// 	// fmt.Println(tl.String())
+// 	// tl.Delete(1)
+// 	// fmt.Println(tl.String())
+// 	// tl.Delete(0)
+// 	// fmt.Println(tl.String())
 
-	// a, ok := tl.Search(4)
-	// if ok {
-	// 	fmt.Println("Search returned", a)
-	// } else {
-	// 	fmt.Println("Alert!")
-	// }
-	// a, ok = tl.Search(8)
-	// if !ok {
-	// 	fmt.Println("Search did not return")
-	// } else {
-	// 	fmt.Println("Alert!")
-	// }
-	// fmt.Println(tl.String())
-}
+// 	tl.Insert(1, 1)
+// 	tl.Insert(2, 1)
+// 	tl.Insert(3, 1)
+// 	tl.Insert(4, 1)
+// 	tl.Insert(5, 1)
+// 	tl.Insert(6, 1)
+// 	tl.Insert(7, 1)
+// 	tl.Insert(8, 1)
+// 	tl.Insert(9, 1)
+// 	tl.Insert(10, 1)
+// 	fmt.Println(tl)
+// 	tl.Delete(3)
+// 	fmt.Println(tl)
+// 	tl.Delete(2)
+// 	fmt.Println(tl)
+// 	tl.Delete(8)
+// 	fmt.Println(tl)
+// 	tl.Delete(10)
+// 	fmt.Println(tl)
+
+// 	// a, ok := tl.Search(4)
+// 	// if ok {
+// 	// 	fmt.Println("Search returned", a)
+// 	// } else {
+// 	// 	fmt.Println("Alert!")
+// 	// }
+// 	// a, ok = tl.Search(8)
+// 	// if !ok {
+// 	// 	fmt.Println("Search did not return")
+// 	// } else {
+// 	// 	fmt.Println("Alert!")
+// 	// }
+// 	// fmt.Println(tl.String())
+// }
