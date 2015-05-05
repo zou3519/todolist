@@ -196,8 +196,6 @@ func (tl *TodoList) Delete(key int) (value interface{}, ok bool) {
 	path := tl.findPredecessors(key)
 	height := tl.height
 
-	//fmt.Println("Delete", key)
-
 	foundNode := path[height].Next(height)
 
 	// thing wasn't found in the list
@@ -216,56 +214,54 @@ func (tl *TodoList) Delete(key int) (value interface{}, ok bool) {
 		// tNext may or may not be the found node
 		tNext := predecessor.Next(i)
 
-		// case 1
-		if tNext == nil {
+		// now, there are 3 cases of the node configuration, with many subcases
+		// let pre be the previous node, 9 be the found node, and suc be
+		// the successor node. Keep in mind that the successor node can be nil
+		// case 1: pre -> nil
+		// case 2: pre -> suc ->
+		// case 3: pre -> 9 -> nil
+		// case 4: pre -> 9 -> 11 (11 > suc)
+		// case 5: pre -> 9 -> suc -> 11
+		// case 6: pre -> 11
+
+		if tNext == nil { // case 1
 			predecessor.SetNext(i, successorNode)
 			if successorNode != nil {
 				tl.lengths[i] += 1
 			}
-
-			// case 2
 		} else if successorNode != nil && tNext.key == successorNode.key {
-			// do nothing
+			// case 2, do nothing
 
-			// cases 3-5
-		} else if tNext.key == foundNode.key {
+		} else if tNext.key == foundNode.key { // cases 3-5
 			tNextNext := tNext.Next(i)
-			// case 3
-			if tNextNext == nil {
+
+			if tNextNext == nil { // case 3
 				predecessor.SetNext(i, successorNode)
 				if successorNode == nil {
 					tl.lengths[i] -= 1
 				}
-				// case 5
-			} else if tNextNext.key == successorNode.key {
+			} else if tNextNext.key == successorNode.key { // case 5
 				predecessor.SetNext(i, successorNode)
 				tl.lengths[i] -= 1
-				// case 4
-			} else {
+			} else { // case 4
 				predecessor.SetNext(i, successorNode)
 				successorNode.SetNext(i, tNextNext)
 			}
-			// case 6, pre -> -> -> 11
-		} else {
+		} else { // case 6
 			predecessor.SetNext(i, successorNode)
 			successorNode.SetNext(i, tNext)
 			tl.lengths[i] += 1
 		}
 	}
 
-	//fmt.Println("after sky high", tl.String())
 	// check to see if need to delete layers (h = depth - 1)
 	if float64(tl.lengths[height]) < math.Ceil(math.Pow(2.0-tl.epsilon, float64(height-1))) {
-		//fmt.Println("Remove Layer!")
 		tl.removeLayer()
-		//fmt.Println("after remove layer", tl.String())
 	}
 
 	// now, do partial rebuilding if there is more than 1 thing in L_0
 	if tl.lengths[0] > 1 {
-		//fmt.Println("Rebuild L_0 cond!")
 		tl.fixFirstLayer()
-		//fmt.Println("after rebuild L_0", tl.String())
 	}
 
 	return foundNode.value, true
