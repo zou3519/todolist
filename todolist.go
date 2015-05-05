@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"math"
+	"math/rand"
+	"time"
 )
 
 type TNode struct {
@@ -94,9 +96,11 @@ func (tl *TodoList) rebuildLayer(i int) {
 			iNode.SetNext(i, node)
 			iNode = node
 			length++
+			//fmt.Print(node.key, " ")
 		}
 		second = !second
 	}
+	//fmt.Print(node.key, "\n")
 
 	// length variable changes too
 	tl.lengths[i] = length
@@ -192,6 +196,8 @@ func (tl *TodoList) Delete(key int) (value interface{}, ok bool) {
 	path := tl.findPredecessors(key)
 	height := tl.height
 
+	//fmt.Println("Delete", key)
+
 	foundNode := path[height].Next(height)
 
 	// thing wasn't found in the list
@@ -210,37 +216,56 @@ func (tl *TodoList) Delete(key int) (value interface{}, ok bool) {
 		// tNext may or may not be the found node
 		tNext := predecessor.Next(i)
 
-		// figure out chaining for L_0
-		if tNext != nil && tNext.key == key {
-			// if tNext is the found node, predecessor.next = tNext.next
+		// case 1
+		if tNext == nil {
 			predecessor.SetNext(i, successorNode)
-			tl.lengths[i] -= 1 // decrement by 1, found node is removed
-
-			// make the successor appear
-			tNextNext := tNext.Next(i)
-			if tNextNext != nil && tNextNext.key != successorNode.key {
-				successorNode.SetNext(i, tNextNext)
+			if successorNode != nil {
 				tl.lengths[i] += 1
 			}
-		} else if tNext != nil && tNext.key != successorNode.key {
+
+			// case 2
+		} else if successorNode != nil && tNext.key == successorNode.key {
+			// do nothing
+
+			// cases 3-5
+		} else if tNext.key == foundNode.key {
+			tNextNext := tNext.Next(i)
+			// case 3
+			if tNextNext == nil {
+				predecessor.SetNext(i, successorNode)
+				if successorNode == nil {
+					tl.lengths[i] -= 1
+				}
+				// case 5
+			} else if tNextNext.key == successorNode.key {
+				predecessor.SetNext(i, successorNode)
+				tl.lengths[i] -= 1
+				// case 4
+			} else {
+				predecessor.SetNext(i, successorNode)
+				successorNode.SetNext(i, tNextNext)
+			}
+			// case 6, pre -> -> -> 11
+		} else {
+			predecessor.SetNext(i, successorNode)
 			successorNode.SetNext(i, tNext)
 			tl.lengths[i] += 1
-		} else if tNext == nil {
-			tl.lengths[i] += 1
 		}
-
 	}
 
+	//fmt.Println("after sky high", tl.String())
 	// check to see if need to delete layers (h = depth - 1)
 	if float64(tl.lengths[height]) < math.Ceil(math.Pow(2.0-tl.epsilon, float64(height-1))) {
-		fmt.Println("Remove Layer!")
+		//fmt.Println("Remove Layer!")
 		tl.removeLayer()
+		//fmt.Println("after remove layer", tl.String())
 	}
 
 	// now, do partial rebuilding if there is more than 1 thing in L_0
 	if tl.lengths[0] > 1 {
-		fmt.Println("Rebuild L_0 cond!")
+		//fmt.Println("Rebuild L_0 cond!")
 		tl.fixFirstLayer()
+		//fmt.Println("after rebuild L_0", tl.String())
 	}
 
 	return foundNode.value, true
@@ -277,6 +302,9 @@ func (tl *TodoList) String() string {
 			if node == nil || v != node.key {
 				// create string with digits equal to the number of digits in v
 				digits := int(math.Floor(math.Log10(float64(v)))) + 1
+				if v == 0 {
+					digits = 1
+				}
 				for c := 0; c < digits; c++ {
 					build += " "
 				}
@@ -321,26 +349,35 @@ func main() {
 	// fmt.Println(tl.String())
 	// tl.Delete(0)
 	// fmt.Println(tl.String())
-
-	tl.Insert(1, 1)
-	tl.Insert(2, 1)
-	tl.Insert(3, 1)
-	tl.Insert(4, 1)
-	tl.Insert(5, 1)
-	tl.Insert(6, 1)
-	tl.Insert(7, 1)
-	tl.Insert(8, 1)
-	tl.Insert(9, 1)
-	tl.Insert(10, 1)
-	fmt.Println(tl)
-	tl.Delete(3)
-	fmt.Println(tl)
-	tl.Delete(2)
-	fmt.Println(tl)
-	tl.Delete(8)
-	fmt.Println(tl)
-	tl.Delete(10)
-	fmt.Println(tl)
+	nums1 := []int{11, 0, 6, 9, 7, 4, 2, 3, 1, 8, 10, 5}
+	nums2 := []int{9, 7, 6, 8, 3, 4, 11, 1, 0, 10, 5, 2}
+	rand.Seed(time.Now().UTC().UnixNano())
+	// for i := 0; i < 10; i++ {
+	// 	nums := rand.Perm(12)
+	// 	fmt.Println(nums)
+	// 	for _, v := range nums {
+	// 		tl.Insert(v, v)
+	// 		//fmt.Println(tl.String())
+	// 	}
+	// 	nums = rand.Perm(12)
+	// 	fmt.Println(nums)
+	// 	for _, v := range nums {
+	// 		tl.Delete(v)
+	// 		// fmt.Println(tl.String())
+	// 	}
+	// }
+	// nums = rand.Perm(12)
+	// fmt.Println(nums)
+	for _, v := range nums1 {
+		tl.Insert(v, v)
+		fmt.Println(tl.String())
+	}
+	// nums = rand.Perm(12)
+	// fmt.Println(nums)
+	for _, v := range nums2 {
+		tl.Delete(v)
+		fmt.Println(tl.String())
+	}
 
 	// a, ok := tl.Search(4)
 	// if ok {
