@@ -17,7 +17,7 @@ func main() {
 	// ExpDelete(NewSkipList(), N)
 
 	N := 2000000
-	ExpAll(LLRBBuilder, N)
+	ExpAll(TreapBuilder, N)
 
 	// N := 1000000
 	// perm := rand.Perm(N)
