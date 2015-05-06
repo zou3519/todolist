@@ -4,10 +4,6 @@ import (
 	"testing"
 )
 
-func MapSetBuilder() Dict {
-	return NewMapSet()
-}
-
 func Test_MapSet_Insert(t *testing.T) {
 	GenericInsertTest(t, MapSetBuilder)
 }

@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-    rand.Seed(time.Now().UTC().UnixNano())
+	rand.Seed(time.Now().UTC().UnixNano())
 
 	// N := 1000000
 	// ExpInsert(NewSkipList(), N)
@@ -18,6 +18,9 @@ func main() {
 
 	N := 2000000
 	ExpAll(TreapBuilder, N)
+
+	TodolistEpsilonGraphs()
+	// e.g. ExpAll(TodoListBuilder(0.2), N)
 
 	// N := 1000000
 	// perm := rand.Perm(N)

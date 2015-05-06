@@ -21,18 +21,18 @@ type LinkedTodoList struct {
 	ceilLimits []float64 // ceil_limits[i] = ceil((2-epsilon)^h)
 }
 
-func NewLinkedTodoList() *LinkedTodoList {
+func NewLinkedTodoList(epsilon float64) *LinkedTodoList {
 	ltl := LinkedTodoList{}
 	ltl.Sentinel = make([]*TLNode, 1, 16)
 	ltl.lengths = make([]int, 1, 16)
 	ltl.Sentinel[0] = &TLNode{}
 	ltl.lengths[0] = 0
-	ltl.epsilon = 0.2
+	ltl.epsilon = epsilon
 	return &ltl
 }
 
-func LinkedTodoListBuilder() Dict {
-	return NewLinkedTodoList()
+func LinkedTodoListBuilder(epsilon float64) dictBuilder {
+	return func() Dict { return NewLinkedTodoList(epsilon) }
 }
 
 func (tl *LinkedTodoList) lengthLimit(h int, ceil bool) float64 {

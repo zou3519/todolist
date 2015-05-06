@@ -27,16 +27,16 @@ type TodoList2 struct {
 	ceilLimits []float64 // ceil_limits[i] = ceil((2-epsilon)^h)
 }
 
-func NewTodoList2() *TodoList2 {
+func NewTodoList2(epsilon float64) *TodoList2 {
 	result := TodoList2{lengths: make([]int, 1, 16)}
 	result.Sentinel = TNode2{next: make([]TContainer, 1, 16), tl: &result}
 	result.lengths[0] = 0
-	result.epsilon = 0.2
+	result.epsilon = epsilon
 	return &result
 }
 
-func TodoList2Builder() Dict {
-	return NewTodoList2()
+func TodoList2Builder(epsilon float64) dictBuilder {
+	return func() Dict { return NewTodoList2(epsilon) }
 }
 
 func (tl *TodoList2) lengthLimit(h int, ceil bool) float64 {
