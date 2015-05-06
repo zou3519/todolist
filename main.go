@@ -1,17 +1,22 @@
 package main
 
 import (
-	_ "fmt"
+	//"fmt"
+	"github.com/davecheney/profile"
 	"math/rand"
 	"time"
 )
 
 func main() {
+	defer profile.Start(profile.CPUProfile).Stop()
 	rand.Seed(time.Now().UTC().UnixNano())
-	N := 300000
+	N := 100000
 	ExpInsert(NewTodoList(), N)
 	ExpSearch(NewTodoList(), N)
 	ExpDelete(NewTodoList(), N)
+	// ExpInsert(NewMapSet(), N)
+	// ExpSearch(NewMapSet(), N)
+	// ExpDelete(NewMapSet(), N)
 	// ExpInsert(NewLLRB(), N)
 	// ExpSearch(NewLLRB(), N)
 	// ExpDelete(NewLLRB(), N)
