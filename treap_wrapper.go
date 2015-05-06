@@ -16,6 +16,10 @@ func NewTreap() *Treap {
 	return &Treap{tree: treap.NewTree(IntLess)}
 }
 
+func TreapBuilder() Dict {
+	return NewTreap()
+}
+
 func (t *Treap) Insert(key int, value interface{}) {
 	t.tree.Insert(key, value)
 	return

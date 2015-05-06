@@ -10,8 +10,6 @@ import (
 	"fmt"
 )
 
-type dictBuilder func() Dict
-
 // GenericInsertTest tests random inserts against dicts. May not be comprehensive.
 func GenericInsertTest(t *testing.T, build dictBuilder) {
 	rand.Seed(time.Now().UTC().UnixNano())

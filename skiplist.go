@@ -48,6 +48,14 @@ func NewSkipList() *SkipList {
 	return &sl
 }
 
+func SkipListBuilder() Dict {
+	return NewSkipList()
+}
+
+func (sl *SkipList) Reset() *SkipList {
+	return NewSkipList()
+}
+
 //WHERE to start the search??
 func (sl *SkipList) findPredecessors(x int) []*SLNode {
 	height := sl.height
@@ -235,19 +243,25 @@ func (sl *SkipList) test_delete(items []int) {
 // func main() {
 // 	fmt.Printf("Hello, world!\n")
 
+// 	n := 30
 // 	sl := NewSkipList()
-// 	a := rand.Perm(1000000)
+// 	a := rand.Perm(n)
 // 	sl.test_insert(a)
 // 	fmt.Printf("Inserting done\n")
 
 // 	sl.test_search(a)
 // 	fmt.Printf("Searching done\n")
+// 	fmt.Println(sl.String())
+// 	sl = sl.Reset()
+// 	fmt.Println(sl.String())
 
-// 	sl.test_delete(a)
-// 	fmt.Printf("Deleting done\n")
+// 	// b := rand.Perm(n)
+// 	// sl.test_insert(b)
+// 	// fmt.Printf("Inserting done\n")	
+// 	// sl.test_delete(b)
+// 	// fmt.Printf("Deleting done\n")
 
-// 	b := rand.Perm(10)
-// 	c := rand.Perm(10)
-// 	fmt.Println(b, c)
+// 	fmt.Println(sl.String())
+
 
 // }

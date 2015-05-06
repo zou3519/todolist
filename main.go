@@ -1,17 +1,27 @@
 package main
 
 import (
-	//"fmt"
+	// "fmt"
 	// "github.com/davecheney/profile"
-	// "math/rand"
-	// "time"
+	"math/rand"
+	"time"
+	// "sort"
 )
 
 func main() {
+    rand.Seed(time.Now().UTC().UnixNano())
 
-	N := 1000000
-	ExpInsert(NewSkipList(), N)
-	ExpSearch(NewSkipList(), N)
-	ExpDelete(NewSkipList(), N)
+	// N := 1000000
+	// ExpInsert(NewSkipList(), N)
+	// ExpSearch(NewSkipList(), N)
+	// ExpDelete(NewSkipList(), N)
+
+	N := 2000000
+	ExpAll(LLRBBuilder, N)
+
+	// N := 1000000
+	// perm := rand.Perm(N)
+	// sort.Ints(perm)
+	// ExpSearch(NewOptimalBST(perm), N)
 
 }

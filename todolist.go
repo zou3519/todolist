@@ -30,6 +30,10 @@ func NewTodoList() *TodoList {
 	return &result
 }
 
+func TodoListBuilder() Dict {
+	return NewTodoList()
+}
+
 func (tl *TodoList) lengthLimit(h int, ceil bool) float64 {
 	for len(tl.limits)-1 < h {
 		newH := float64(len(tl.limits))

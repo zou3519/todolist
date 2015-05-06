@@ -4,10 +4,6 @@ import (
 	"testing"
 )
 
-func TreapBuilder() Dict {
-	return NewTreap()
-}
-
 func Test_Treap_Insert(t *testing.T) {
 	GenericInsertTest(t, TreapBuilder)
 }

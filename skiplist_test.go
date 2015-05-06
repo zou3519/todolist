@@ -4,10 +4,6 @@ import (
 	"testing"
 )
 
-func SkipListBuilder() Dict {
-	return NewSkipList()
-}
-
 func Test_SkipList_Insert(t *testing.T) {
 	GenericInsertTest(t, SkipListBuilder)
 }

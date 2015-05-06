@@ -4,10 +4,6 @@ import (
 	"testing"
 )
 
-func LinkedTodoListBuilder() Dict {
-	return NewLinkedTodoList()
-}
-
 func Test_LinkedTodo_Insert(t *testing.T) {
 	GenericInsertTest(t, LinkedTodoListBuilder)
 }

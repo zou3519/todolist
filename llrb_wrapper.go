@@ -12,6 +12,10 @@ func NewLLRB() *LLRB {
 	return &LLRB{tree: redblacktree.NewWithIntComparator()}
 }
 
+func LLRBBuilder() Dict {
+	return NewLLRB()
+}
+
 func (t *LLRB) Search(key int) (interface{}, bool) {
 	return t.tree.Get(key)
 }

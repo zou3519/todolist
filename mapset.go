@@ -13,6 +13,10 @@ func NewMapSet() *MapSet {
 	return &MapSet{Map: m}
 }
 
+func MapSetBuilder() Dict {
+	return NewMapSet()
+}
+
 func (set *MapSet) Insert(key int, value interface{}) {
 	set.Map[key] = value
 }

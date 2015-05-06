@@ -4,10 +4,6 @@ import (
 	"testing"
 )
 
-func LLRBBuilder() Dict {
-	return NewLLRB()
-}
-
 func Test_LLRB_Insert(t *testing.T) {
 	GenericInsertTest(t, LLRBBuilder)
 }

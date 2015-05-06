@@ -4,10 +4,6 @@ import (
 	"testing"
 )
 
-func TodoListBuilder() Dict {
-	return NewTodoList()
-}
-
 func Test_TodoList_Insert(t *testing.T) {
 	GenericInsertTest(t, TodoListBuilder)
 }

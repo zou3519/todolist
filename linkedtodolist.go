@@ -31,6 +31,10 @@ func NewLinkedTodoList() *LinkedTodoList {
 	return &ltl
 }
 
+func LinkedTodoListBuilder() Dict {
+	return NewLinkedTodoList()
+}
+
 func (tl *LinkedTodoList) lengthLimit(h int, ceil bool) float64 {
 	for len(tl.limits)-1 < h {
 		newH := float64(len(tl.limits))

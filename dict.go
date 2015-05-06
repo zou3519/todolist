@@ -2,6 +2,8 @@ package main
 
 import ()
 
+type dictBuilder func() Dict
+
 // Dict is an interface for data structures that can Insert, Search, and Delete
 type Dict interface {
 	// Insert element into the set
