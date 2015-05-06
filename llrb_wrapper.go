@@ -1,42 +1,28 @@
 package main
 
 import (
-	"github.com/petar/GoLLRB/llrb"
+	"github.com/emirpasic/gods/trees/redblacktree"
 )
 
 type LLRB struct {
-	tree *llrb.LLRB
-}
-
-type Number struct {
-	nkey int
-	nval interface{}
+	tree *redblacktree.Tree
 }
 
 func NewLLRB() *LLRB {
-	return &LLRB{tree: llrb.New()}
+	return &LLRB{tree: redblacktree.NewWithIntComparator()}
 }
 
-func (a Number) Less(b llrb.Item) bool { return a.nkey < b.(Number).nkey }
-
 func (t *LLRB) Search(key int) (interface{}, bool) {
-	item_got := t.tree.Get(Number{nkey: key, nval: 0})
-	if item_got == nil {
-		return nil, false
-	}
-	return item_got.(Number).nval, true
+	return t.tree.Get(key)
 }
 
 func (t *LLRB) Delete(key int) (interface{}, bool) {
-	item_got := t.tree.Delete(Number{nkey: key, nval: 0})
-	if item_got == nil {
-		return nil, false
-	}
-	return item_got.(Number).nval, true
+	t.tree.Remove(key)
+	return nil, true
 }
 
 func (t *LLRB) Insert(key int, value interface{}) {
-	t.tree.ReplaceOrInsert(Number{nkey: key, nval: value})
+	t.tree.Put(key, value)
 	return
 }
 

@@ -89,6 +89,7 @@ func benchmarkRandomDelete(d Dict, n int, b *testing.B) {
 			d.Delete(a2[j])
 		}
 	}
+}
 
 func TodoListBuilder() Dict {
 	return NewTodoList()

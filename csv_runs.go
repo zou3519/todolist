@@ -32,7 +32,7 @@ func Exper(d Dict, N int, operation string) {
 	times := make([][]string, trials)
 
 	count := 0
-	min_N := int(math.Max(float64(N / 1000), 10))
+	min_N := int(math.Max(float64(N / 100), 10))
 
 	switch operation {
 	case "Insert":

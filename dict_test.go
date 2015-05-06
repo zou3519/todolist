@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"testing"
 	"time"
+	"fmt"
 )
 
 type dictBuilder func() Dict
@@ -62,6 +63,7 @@ func GenericSearchTest(t *testing.T, build dictBuilder) {
 					}
 					if a != key {
 						t.Error("Search for key returned wrong value")
+						fmt.Println(a)
 					}
 				}
 			}
