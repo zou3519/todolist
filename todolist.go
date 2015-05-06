@@ -3,8 +3,6 @@ package main
 import (
 	"fmt"
 	"math"
-	// "math/rand"
-	// "time"
 )
 
 type TNode struct {
@@ -15,11 +13,13 @@ type TNode struct {
 }
 
 type TodoList struct {
-	lengths  []int   // the size of the ith list
-	height   int     // the height of the todolist. equal to depth - 1
-	n        int     // number of things being held
-	epsilon  float64 // constant
-	Sentinel TNode   // sentinel[i] is the ith sentinel; access list with .next[0]
+	lengths    []int     // the size of the ith list
+	height     int       // the height of the todolist. equal to depth - 1
+	n          int       // number of things being held
+	epsilon    float64   // constant
+	Sentinel   TNode     // sentinel[i] is the ith sentinel; access list with .next[0]
+	limits     []float64 // limits[i] = (2-epsilon)^h
+	ceilLimits []float64 // ceil_limits[i] = ceil((2-epsilon)^h)
 }
 
 func NewTodoList() *TodoList {
@@ -28,6 +28,20 @@ func NewTodoList() *TodoList {
 	result.lengths[0] = 0
 	result.epsilon = 0.2
 	return &result
+}
+
+func (tl *TodoList) lengthLimit(h int, ceil bool) float64 {
+	for len(tl.limits)-1 < h {
+		newH := float64(len(tl.limits))
+		x := math.Pow(2.-tl.epsilon, newH)
+		tl.limits = append(tl.limits, x)
+		tl.ceilLimits = append(tl.ceilLimits, math.Ceil(x))
+	}
+	if ceil {
+		return tl.ceilLimits[h]
+	} else {
+		return tl.limits[h]
+	}
 }
 
 func (node *TNode) Next(i int) *TNode {
@@ -152,7 +166,7 @@ func (tl *TodoList) Search(key int) (value interface{}, ok bool) {
 func (tl *TodoList) fixFirstLayer() {
 	// first, find the smallest index i such that |L_i| <= (2-ep)^i
 	i := 0
-	for ; float64(tl.lengths[i]) > math.Pow(2.-tl.epsilon, float64(i)); i++ {
+	for ; float64(tl.lengths[i]) > tl.lengthLimit(i, false); i++ {
 		// fmt.Println(i, tl.lengths[i], math.Pow(2.-tl.epsilon, float64(i)))
 	}
 	tl.rebuild(i - 1)
@@ -180,7 +194,7 @@ func (tl *TodoList) Insert(key int, value interface{}) {
 	}
 
 	// rebalancing condition
-	if float64(tl.lengths[height]) >= math.Ceil(math.Pow(2.0-tl.epsilon, float64(height))) {
+	if float64(tl.lengths[height]) >= tl.lengthLimit(height, true) {
 		// fmt.Println("New Layer!")
 		tl.newLayer()
 	}
@@ -255,7 +269,7 @@ func (tl *TodoList) Delete(key int) (value interface{}, ok bool) {
 	}
 
 	// check to see if need to delete layers (h = depth - 1)
-	if float64(tl.lengths[height]) < math.Ceil(math.Pow(2.0-tl.epsilon, float64(height-1))) {
+	if float64(tl.lengths[height]) < tl.lengthLimit(height-1, true) {
 		tl.removeLayer()
 	}
 
@@ -315,79 +329,4 @@ func (tl *TodoList) String() string {
 
 	return result
 }
-
-
-// func main() {
-// 	fmt.Printf("Hello, world!\n")
-
-// 	tl := NewTodoList()
-// 	fmt.Println(tl.String())
-// 	// tl.Insert(0, 1)
-// 	// fmt.Println(tl.String())
-// 	// tl.Insert(2, 1)
-// 	// fmt.Println(tl.String())
-// 	// tl.Insert(3, 1)
-// 	// fmt.Println(tl.String())
-// 	// tl.Insert(4, 4)
-// 	// fmt.Println(tl.String())
-// 	// tl.Insert(5, 1)
-// 	// fmt.Println(tl.String())
-// 	// tl.Insert(6, 1)
-// 	// fmt.Println(tl.String())
-// 	// tl.Insert(7, 1)
-// 	// fmt.Println(tl.String())
-// 	// tl.Delete(6)
-// 	// fmt.Println(tl.String())
-// 	// tl.Delete(5)
-// 	// fmt.Println(tl.String())
-// 	// tl.Delete(7)
-// 	// fmt.Println(tl.String())
-// 	// tl.Delete(1)
-// 	// fmt.Println(tl.String())
-// 	// tl.Delete(0)
-// 	// fmt.Println(tl.String())
-// 	nums1 := []int{11, 0, 6, 9, 7, 4, 2, 3, 1, 8, 10, 5}
-// 	nums2 := []int{9, 7, 6, 8, 3, 4, 11, 1, 0, 10, 5, 2}
-// 	rand.Seed(time.Now().UTC().UnixNano())
-// 	// for i := 0; i < 10; i++ {
-// 	// 	nums := rand.Perm(12)
-// 	// 	fmt.Println(nums)
-// 	// 	for _, v := range nums {
-// 	// 		tl.Insert(v, v)
-// 	// 		//fmt.Println(tl.String())
-// 	// 	}
-// 	// 	nums = rand.Perm(12)
-// 	// 	fmt.Println(nums)
-// 	// 	for _, v := range nums {
-// 	// 		tl.Delete(v)
-// 	// 		// fmt.Println(tl.String())
-// 	// 	}
-// 	// }
-// 	// nums = rand.Perm(12)
-// 	// fmt.Println(nums)
-// 	for _, v := range nums1 {
-// 		tl.Insert(v, v)
-// 		fmt.Println(tl.String())
-// 	}
-// 	// nums = rand.Perm(12)
-// 	// fmt.Println(nums)
-// 	for _, v := range nums2 {
-// 		tl.Delete(v)
-// 		fmt.Println(tl.String())
-// 	}
-
-// 	// a, ok := tl.Search(4)
-// 	// if ok {
-// 	// 	fmt.Println("Search returned", a)
-// 	// } else {
-// 	// 	fmt.Println("Alert!")
-// 	// }
-// 	// a, ok = tl.Search(8)
-// 	// if !ok {
-// 	// 	fmt.Println("Search did not return")
-// 	// } else {
-// 	// 	fmt.Println("Alert!")
-// 	// }
-// 	// fmt.Println(tl.String())
-// }
 

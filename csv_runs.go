@@ -1,17 +1,15 @@
 package main
 
 import (
+	"encoding/csv"
 	"fmt"
 	"math"
 	"math/rand"
-	"encoding/csv"
 	"os"
-	"time"
 	"reflect"
 	"strings"
+	"time"
 )
-
-
 
 func ExpInsert(d Dict, N int) {
 	Exper(d, N, "Insert")
@@ -43,8 +41,8 @@ func Exper(d Dict, N int, operation string) {
 				d.Insert(perm[j], perm[j])
 			}
 			elapsed := (time.Since(start)).Seconds()
-			
-			times[count] = []string{fmt.Sprintf("%v",n), fmt.Sprintf("%v",elapsed)}
+
+			times[count] = []string{fmt.Sprintf("%v", n), fmt.Sprintf("%v", elapsed)}
 			count++
 		}
 	case "Delete":
@@ -60,8 +58,8 @@ func Exper(d Dict, N int, operation string) {
 				d.Delete(perm[j])
 			}
 			elapsed := (time.Since(start)).Seconds()
-			
-			times[count] = []string{fmt.Sprintf("%v",n), fmt.Sprintf("%v",elapsed)}
+
+			times[count] = []string{fmt.Sprintf("%v", n), fmt.Sprintf("%v", elapsed)}
 			count++
 		}
 	case "Search":
@@ -77,8 +75,8 @@ func Exper(d Dict, N int, operation string) {
 				d.Search(perm[j])
 			}
 			elapsed := (time.Since(start)).Seconds()
-			
-			times[count] = []string{fmt.Sprintf("%v",n), fmt.Sprintf("%v",elapsed)}
+
+			times[count] = []string{fmt.Sprintf("%v", n), fmt.Sprintf("%v", elapsed)}
 			count++
 		}
 	default:
@@ -86,7 +84,6 @@ func Exper(d Dict, N int, operation string) {
 			fmt.Println("Not a valid operation!")
 		}
 	}
-	
 
 	d_type := strings.Replace(reflect.TypeOf(d).String(), "*main.", "", 1)
 	filename := fmt.Sprintf("Outputs/output%s%s.csv", d_type, operation)
@@ -98,7 +95,6 @@ func Exper(d Dict, N int, operation string) {
 	}
 	defer csvfile.Close()
 
-
 	writer := csv.NewWriter(csvfile)
 	err = writer.WriteAll(times) // flush everything into csvfile
 	if err != nil {
@@ -107,7 +103,3 @@ func Exper(d Dict, N int, operation string) {
 	}
 
 }
-
-
-
-
