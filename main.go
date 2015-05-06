@@ -16,8 +16,10 @@ func main() {
 	// ExpSearch(NewSkipList(), N)
 	// ExpDelete(NewSkipList(), N)
 
-	N := 2000000
-	ExpAll(SkipListBuilder, N)
+	//N := 2000000
+	//ExpAll(SkipListBuilder, N)
+	TodolistEpsilonGraphs()
+	// e.g. ExpAll(TodoListBuilder(0.2), N)
 
 	// N := 1000000
 	// perm := rand.Perm(N)

@@ -11,7 +11,59 @@ import (
 	"time"
 )
 
-// type dictBuilder func() Dict
+func TodolistEpsilonGraphs() {
+	inserts := 1000000
+	searches := 500000
+	reps := 5
+
+	times := make([][]string, 0, 16)
+
+	for epsilon := 0.025; epsilon <= 0.7; epsilon += 0.025 {
+		fmt.Println(epsilon)
+		insert_time := 0.
+		search_time := 0.
+
+		d := NewTodoList(epsilon)
+
+		//inserting
+		for r := 0; r < reps; r++ {
+			perm := rand.Perm(inserts)
+			start := time.Now()
+			for _, v := range perm {
+				d.Insert(v, v)
+			}
+			insert_time += (time.Since(start)).Seconds()
+
+			perm = rand.Perm(inserts)
+			start = time.Now()
+			for j := 0; j < searches; j++ {
+				d.Search(j)
+			}
+			search_time += (time.Since(start)).Seconds()
+		}
+		insert_time = insert_time / float64(reps)
+		search_time = search_time / float64(reps)
+		times = append(times, []string{fmt.Sprint(epsilon), fmt.Sprint(insert_time), fmt.Sprint(search_time)})
+	}
+
+	d := NewTodoList(0.1)
+	d_type := strings.Replace(reflect.TypeOf(d).String(), "*main.", "", 1)
+	filename := fmt.Sprintf("Outputs/epsilon%s.csv", d_type)
+	fmt.Println(filename)
+	csvfile, err := os.Create(filename)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	defer csvfile.Close()
+
+	writer := csv.NewWriter(csvfile)
+	err = writer.WriteAll(times) // flush everything into csvfile
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+}
 
 func ExpInsert(d Dict, N int) {
 	Exper(d, N, "Insert")
