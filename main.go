@@ -1,44 +1,35 @@
 package main
 
 import (
-	// "fmt"
-	// "math/rand"
-	// "time"
+	_ "fmt"
+	"math/rand"
+	"time"
 )
 
-// func main() {
-// 	// rand.Seed(time.Now().UTC().UnixNano())
+func main() {
+	rand.Seed(time.Now().UTC().UnixNano())
+	N := 300000
+	ExpInsert(NewTodoList(), N)
+	ExpSearch(NewTodoList(), N)
+	ExpDelete(NewTodoList(), N)
+	// ExpInsert(NewLLRB(), N)
+	// ExpSearch(NewLLRB(), N)
+	// ExpDelete(NewLLRB(), N)
+	// ExpInsert(NewLinkedTodoList(), N)
+	// ExpSearch(NewLinkedTodoList(), N)
+	// ExpDelete(NewLinkedTodoList(), N)
 
-// 	// nums := rand.Perm(100000)
-// 	// start := time.Now()
-
-// 	// var d Dict = NewLLRB()
-// 	// for _, v := range nums {
-// 	// 	//fmt.Println("Inserting", v)
-// 	// 	d.Insert(v, v)
-// 	// 	//fmt.Println(d.String())
-// 	// 	//fmt.Println(d.(*TodoList).DebugString())
-// 	// }
-// 	// elapsed := time.Since(start)
-// 	// fmt.Printf("inserts took: %s\n", elapsed)
-
-// 	// start = time.Now()
-// 	// nums = rand.Perm(100000)
-// 	// for _, v := range nums {
-// 	// 	//fmt.Println("Inserting", v)
-// 	// 	_, _ = d.Search(v)
-// 	// 	//fmt.Println(d.String())
-// 	// 	//fmt.Println(d.(*TodoList).DebugString())
-// 	// }
-// 	// elapsed = time.Since(start)
-// 	// fmt.Printf("searches took: %s\n", elapsed)
-
-// 	// fmt.Println(d.String())
-
-// 	N := 100000
-// 	ExpInsert(NewLLRB(), N)
-// 	ExpSearch(NewLLRB(), N)
-// 	ExpDelete(NewLLRB(), N)
-
-// }
-
+	// tl := NewLinkedTodoList()
+	// nums := rand.Perm(1)
+	// fmt.Println(nums)
+	// for _, v := range nums {
+	// 	tl.Insert(v, v)
+	// 	fmt.Println(tl.String())
+	// }
+	// nums = rand.Perm(1)
+	// fmt.Println(nums)
+	// for _, v := range nums {
+	// 	tl.Delete(v)
+	// 	fmt.Println(tl.String())
+	// }
+}

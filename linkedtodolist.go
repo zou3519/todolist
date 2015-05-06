@@ -14,10 +14,11 @@ type TLNode struct {
 }
 
 type LinkedTodoList struct {
-	Sentinel []*TLNode // head of each linked list
-	lengths  []int     // length of each linked list
-	epsilon  float64   // epsilon
-	// depth    int       // how deep the sentinel is
+	Sentinel   []*TLNode // head of each linked list
+	lengths    []int     // length of each linked list
+	epsilon    float64   // epsilon
+	limits     []float64 // limits[i] = (2-epsilon)^h
+	ceilLimits []float64 // ceil_limits[i] = ceil((2-epsilon)^h)
 }
 
 func NewLinkedTodoList() *LinkedTodoList {
@@ -28,6 +29,20 @@ func NewLinkedTodoList() *LinkedTodoList {
 	ltl.lengths[0] = 0
 	ltl.epsilon = 0.2
 	return &ltl
+}
+
+func (tl *LinkedTodoList) lengthLimit(h int, ceil bool) float64 {
+	for len(tl.limits)-1 < h {
+		newH := float64(len(tl.limits))
+		x := math.Pow(2.-tl.epsilon, newH)
+		tl.limits = append(tl.limits, x)
+		tl.ceilLimits = append(tl.ceilLimits, math.Ceil(x))
+	}
+	if ceil {
+		return tl.ceilLimits[h]
+	} else {
+		return tl.limits[h]
+	}
 }
 
 func (lst *LinkedTodoList) findPredecessors(x int) []*TLNode {
@@ -101,7 +116,7 @@ func (lst *LinkedTodoList) newLayer() {
 func (lst *LinkedTodoList) removeLayer() {
 	depth := len(lst.Sentinel)
 	ubottom := lst.Sentinel[depth-1]
-	if depth >= 2 {
+	if depth >= 3 {
 		lst.Sentinel[depth-3].down = ubottom
 	}
 	lst.Sentinel[depth-2] = ubottom
@@ -115,7 +130,7 @@ func (lst *LinkedTodoList) Search(key int) (value interface{}, ok bool) {
 	path := lst.findPredecessors(key)
 	uh := path[len(path)-1]
 	nextGuy := uh.next
-	if nextGuy.key == key {
+	if nextGuy != nil && nextGuy.key == key {
 		return nextGuy.elt, true
 	} else {
 		return nil, false
@@ -162,8 +177,7 @@ func (lst *LinkedTodoList) Delete(key int) (value interface{}, ok bool) {
 	}
 
 	// check to see if need to delete layers (h = depth - 1)
-	if float64(lst.lengths[depth-1]) < math.Ceil(math.Pow(2.0-lst.epsilon, float64(depth-2))) {
-		fmt.Println("Remove Layer!")
+	if float64(lst.lengths[depth-1]) < lst.lengthLimit(depth-2, true) {
 		lst.removeLayer()
 	}
 
@@ -172,12 +186,12 @@ func (lst *LinkedTodoList) Delete(key int) (value interface{}, ok bool) {
 	if lst.lengths[0] > 1 {
 		// first, find the smallest index i such that |L_i| <= (2-ep)^i
 		i := 0
-		for ; float64(lst.lengths[i]) > math.Pow(2.-lst.epsilon, float64(i)); i++ {
+		for ; float64(lst.lengths[i]) > lst.lengthLimit(i, false); i++ {
 			// fmt.Println(i, math.Pow(2.-lst.epsilon, float64(i)))
 		}
-		if float64(lst.lengths[i]) > math.Pow(2.-lst.epsilon, float64(i)) {
-			fmt.Println("Something went wrong! In Insert!")
-		}
+		// if float64(lst.lengths[i]) > math.Pow(2.-lst.epsilon, float64(i)) {
+		// 	fmt.Println("Something went wrong! In Insert!")
+		// }
 		lst.rebuild(i - 1)
 	}
 	return foundNode.elt, true
@@ -204,7 +218,7 @@ func (lst *LinkedTodoList) Insert(key int, value interface{}) {
 	}
 
 	// check to see if need to add more layers
-	if float64(lst.lengths[depth-1]) >= math.Ceil(math.Pow(2.0-lst.epsilon, float64(depth-1))) {
+	if float64(lst.lengths[depth-1]) >= lst.lengthLimit(depth-1, true) { //math.Ceil(math.Pow(2.0-lst.epsilon, float64(depth-1))) {
 		// fmt.Println("New Layer!")
 		lst.newLayer()
 	}
@@ -213,12 +227,12 @@ func (lst *LinkedTodoList) Insert(key int, value interface{}) {
 	if lst.lengths[0] > 1 {
 		// first, find the smallest index i such that |L_i| <= (2-ep)^i
 		i := 0
-		for ; float64(lst.lengths[i]) > math.Pow(2.-lst.epsilon, float64(i)); i++ {
+		for ; float64(lst.lengths[i]) > lst.lengthLimit(i, false); i++ {
 			// fmt.Println(i, math.Pow(2.-lst.epsilon, float64(i)))
 		}
-		if float64(lst.lengths[i]) > math.Pow(2.-lst.epsilon, float64(i)) {
-			fmt.Println("Something went wrong! In Insert!")
-		}
+		// if float64(lst.lengths[i]) > math.Pow(2.-lst.epsilon, float64(i)) {
+		// 	fmt.Println("Something went wrong! In Insert!")
+		// }
 		lst.rebuild(i - 1)
 	}
 }
@@ -252,6 +266,9 @@ func (lst *LinkedTodoList) String() string {
 			} else {
 				// create string with digits equal to the number of digits in v
 				digits := int(math.Floor(math.Log10(float64(keys[count])))) + 1
+				if keys[count] == 0 {
+					digits = 1
+				}
 				for c := 0; c < digits; c++ {
 					str += " "
 				}
@@ -265,50 +282,3 @@ func (lst *LinkedTodoList) String() string {
 	result = "LinkedTodoList\n" + result
 	return result
 }
-
-// func main() {
-// 	fmt.Printf("Hello, world!\n")
-
-// 	ltl := NewLinkedTodoList()
-
-// 	ltl.Insert(8, 8)
-// 	ltl.Insert(9, 9)
-// 	ltl.Insert(1, 1)
-// 	ltl.Insert(7, 7)
-// 	ltl.Insert(11, 11)
-// 	ltl.Insert(4, 4)
-// 	ltl.Insert(3, 3)
-
-// 	a, ok := ltl.Search(4)
-// 	if ok {
-// 		fmt.Println("Search returned", a)
-// 	} else {
-// 		fmt.Println("Alert!")
-// 	}
-// 	a, ok = ltl.Search(5)
-// 	if !ok {
-// 		fmt.Println("Search did not return")
-// 	} else {
-// 		fmt.Println("Alert!")
-// 	}
-// 	fmt.Println(ltl.String())
-
-// 	ltl.Delete(3)
-// 	fmt.Println(ltl)
-// 	ltl.Delete(7)
-// 	fmt.Println(ltl)
-// 	ltl.Insert(7, 7)
-// 	fmt.Println(ltl)
-// 	ltl.Delete(7)
-// 	fmt.Println(ltl)
-// 	ltl.Delete(8)
-// 	fmt.Println(ltl)
-// 	ltl.Delete(9)
-// 	fmt.Println(ltl)
-// 	// var m Dict = NewMapSet()
-// 	//m.Insert(1, "stuff")
-// 	//fmt.Println(m)
-
-// 	var _ Dict = NewLLRB()
-
-// }

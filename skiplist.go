@@ -38,7 +38,7 @@ func NewSkipList() *SkipList {
 	sl := SkipList{}
 	// sl.maxheight = int(math.Log2(math.Pow(10, 8))) //appropriate for N <= (1/p)^(sl.maxheight)
 	sl.maxheight = 32
-	fmt.Println(sl.maxheight)
+	// fmt.Println(sl.maxheight)
 	sl.height = 1
 	// sl.Sentinel = make([]*SLNode, sl.maxheight, sl.maxheight)
 	sl.Sentinel = &SLNode{next: make([]*SLNode, sl.maxheight, sl.maxheight),
