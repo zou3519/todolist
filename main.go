@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-    rand.Seed(time.Now().UTC().UnixNano())
+	rand.Seed(time.Now().UTC().UnixNano())
 
 	// N := 1000000
 	// ExpInsert(NewSkipList(), N)
@@ -17,7 +17,7 @@ func main() {
 	// ExpDelete(NewSkipList(), N)
 
 	N := 2000000
-	ExpAll(LLRBBuilder, N)
+	ExpAll(SkipListBuilder, N)
 
 	// N := 1000000
 	// perm := rand.Perm(N)

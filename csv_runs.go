@@ -26,17 +26,17 @@ func ExpDelete(d Dict, N int) {
 }
 
 func ExpAll(DB dictBuilder, N int) {
-	reps := 10
+	reps := 1
 
 	// multiplier := 1.1
 	// trials := int(math.Log2(float64(N)) / math.Log2(multiplier)) //log (base multiplier) of n
 	// times := make([][]string, trials + 1)
 	// min_N := int(math.Max(float64(N / 100), 10))
 
-	difference := N/50
+	difference := N / 50
 	min_N := difference
-	trials := (N - min_N) / difference + 1
-	times := make([][]string, trials + 1)
+	trials := (N-min_N)/difference + 1
+	times := make([][]string, trials+1)
 
 	var insert_time float64
 	var search_time float64
@@ -52,7 +52,7 @@ func ExpAll(DB dictBuilder, N int) {
 		fmt.Println(n)
 		insert_time = 0
 		search_time = 0
-		delete_time = 0 
+		delete_time = 0
 		for r := 0; r < reps; r++ {
 			d = DB()
 
@@ -70,7 +70,7 @@ func ExpAll(DB dictBuilder, N int) {
 			for j := 0; j < n; j++ {
 				d.Search(perm[j])
 			}
-			search_time += (time.Since(start)).Seconds()		
+			search_time += (time.Since(start)).Seconds()
 
 			//deleting
 			perm = rand.Perm(n)
@@ -84,8 +84,7 @@ func ExpAll(DB dictBuilder, N int) {
 		search_time = search_time / float64(reps)
 		delete_time = delete_time / float64(reps)
 
-
-		times[count] = []string{fmt.Sprintf("%v", n), fmt.Sprintf("%v", insert_time), 
+		times[count] = []string{fmt.Sprintf("%v", n), fmt.Sprintf("%v", insert_time),
 			fmt.Sprintf("%v", search_time), fmt.Sprintf("%v", delete_time)}
 		count++
 	}
@@ -109,19 +108,6 @@ func ExpAll(DB dictBuilder, N int) {
 
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 func Exper(d Dict, N int, operation string) {
 	reps := 4
 
@@ -130,11 +116,10 @@ func Exper(d Dict, N int, operation string) {
 	// times := make([][]string, trials)
 	// min_N := int(math.Max(float64(N / 100), 10))
 
-	difference := N/50
+	difference := N / 50
 	min_N := difference
-	trials := (N - min_N) / difference + 1
+	trials := (N-min_N)/difference + 1
 	times := make([][]string, trials)
-
 
 	var elapsed float64
 	count := 0
@@ -152,8 +137,8 @@ func Exper(d Dict, N int, operation string) {
 				elapsed += (time.Since(start)).Seconds()
 			}
 
-			times[count] = []string{fmt.Sprintf("%v", n), 
-				fmt.Sprintf("%v", elapsed / float64(reps))}
+			times[count] = []string{fmt.Sprintf("%v", n),
+				fmt.Sprintf("%v", elapsed/float64(reps))}
 			count++
 		}
 	case "Delete":
@@ -174,8 +159,8 @@ func Exper(d Dict, N int, operation string) {
 				elapsed += (time.Since(start)).Seconds()
 			}
 
-			times[count] = []string{fmt.Sprintf("%v", n), 
-				fmt.Sprintf("%v", elapsed / float64(reps))}
+			times[count] = []string{fmt.Sprintf("%v", n),
+				fmt.Sprintf("%v", elapsed/float64(reps))}
 			count++
 		}
 	case "Search":
@@ -196,7 +181,7 @@ func Exper(d Dict, N int, operation string) {
 				elapsed += (time.Since(start)).Seconds()
 			}
 
-			times[count] = []string{fmt.Sprintf("%v", n), 
+			times[count] = []string{fmt.Sprintf("%v", n),
 				fmt.Sprintf("%v", float64(elapsed))}
 			count++
 		}
