@@ -38,7 +38,7 @@ func main() {
 	}
 
 	// make the output directory on current working directory
-	os.Mkdir("."+string(filepath.Separator)+"Output", 0777)
+	os.Mkdir("."+string(filepath.Separator)+"Outputs", 0777)
 
 	switch mode {
 	case "epsilongraph":

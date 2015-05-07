@@ -122,19 +122,17 @@ func ExpAll(DB dictBuilder, N int, reps int) {
 			}
 			search_time += (time.Since(start)).Seconds()
 
-			if r < 2 && n < N/2 {
-				//deleting
-				perm = rand.Perm(n)
-				start = time.Now()
-				for j := 0; j < n; j++ {
-					d.Delete(perm[j])
-				}
-				delete_time += (time.Since(start)).Seconds()
+			//deleting
+			perm = rand.Perm(n)
+			start = time.Now()
+			for j := 0; j < n; j++ {
+				d.Delete(perm[j])
 			}
+			delete_time += (time.Since(start)).Seconds()
 		}
 		insert_time = insert_time / float64(reps)
 		search_time = search_time / float64(reps)
-		delete_time = delete_time / 2
+		delete_time = delete_time / float64(reps)
 
 		times[count] = []string{fmt.Sprintf("%v", n), fmt.Sprintf("%v", insert_time),
 			fmt.Sprintf("%v", search_time), fmt.Sprintf("%v", delete_time)}

@@ -51,7 +51,7 @@ can benchmark a particular data structure that we have implemented
 or have wrappers for.  Then benchmark will generate a 
 csv file in ./Outputs/.  Run the benchmark with
 
-    ./todolist -mode=<mode> -epsilon=<epsilon> -reps=<reps> -n=<n>
+    ./todolist -mode=<mode> -epsilon=<epsilon> -trials=<trials> -n=<n>
 
 The parameters all have defaults and so are optional. Parameters
 will only be used if the mode specified requires the parameters.
@@ -59,7 +59,7 @@ will only be used if the mode specified requires the parameters.
 Parameters:
 - epsilon: The epsilon constant used in todolist variants
 - n: The maximum number of items to insert/search/delete
-- reps: How many trials to perform for each value of n. The program
+- trials: How many trials to perform for each value of n. The program
 will average out the values automatically.
 - mode: Which data structure to benchmark
 
@@ -77,3 +77,5 @@ standard todolist implemented with linked lists
 with dynamic arrays
 - todolist2: Benchmarks search, insert, and delete for a todolist implemented
 with dynamic arrays with one adjustment
+
+Sample runs to try:
