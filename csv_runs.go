@@ -18,7 +18,7 @@ func TodolistEpsilonGraphs() {
 
 	times := make([][]string, 0, 16)
 
-	for epsilon := 0.025; epsilon <= 0.7; epsilon += 0.025 {
+	for epsilon := 0.02; epsilon <= 0.7; epsilon += 0.01 {
 		fmt.Println(epsilon)
 		insert_time := 0.
 		search_time := 0.
