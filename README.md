@@ -11,6 +11,8 @@ CS223 Probabalistic Algorithms class.
 
 ### Setup 
 
+You will need to set up Go and install the dependencies to run our
+code. Luckily, this is a pretty straightforward process.
 If you're new to Go, set up your GOPATH and Go workspace with
 the instructions described in https://golang.org/doc/code.html.  Go
 is rather picky about its workspace options but allows for some
