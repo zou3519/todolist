@@ -298,7 +298,7 @@ func (tl *TodoList) DebugString() string {
 	return result
 }
 func (tl *TodoList) String() string {
-	result := "TodoList\n"
+	result := fmt.Sprintf("TodoList, eps = %v\n", tl.epsilon)
 	keys := make([]int, tl.n)
 
 	// populate keys

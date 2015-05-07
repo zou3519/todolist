@@ -11,10 +11,9 @@ import (
 	"time"
 )
 
-func TodolistEpsilonGraphs() {
+func TodolistEpsilonGraphs(reps int) {
 	inserts := 1000000
 	searches := 500000
-	reps := 5
 
 	times := make([][]string, 0, 16)
 
@@ -77,8 +76,7 @@ func ExpDelete(d Dict, N int) {
 	Exper(d, N, "Delete")
 }
 
-func ExpAll(DB dictBuilder, N int) {
-	reps := 5
+func ExpAll(DB dictBuilder, N int, reps int) {
 
 	// multiplier := 1.1
 	// trials := int(math.Log2(float64(N)) / math.Log2(multiplier)) //log (base multiplier) of n
