@@ -124,17 +124,19 @@ func ExpAll(DB dictBuilder, N int) {
 			}
 			search_time += (time.Since(start)).Seconds()
 
-			//deleting
-			perm = rand.Perm(n)
-			start = time.Now()
-			for j := 0; j < n; j++ {
-				d.Delete(perm[j])
+			if r < 2 && n < N/2 {
+				//deleting
+				perm = rand.Perm(n)
+				start = time.Now()
+				for j := 0; j < n; j++ {
+					d.Delete(perm[j])
+				}
+				delete_time += (time.Since(start)).Seconds()
 			}
-			delete_time += (time.Since(start)).Seconds()
 		}
 		insert_time = insert_time / float64(reps)
 		search_time = search_time / float64(reps)
-		delete_time = delete_time / float64(reps)
+		delete_time = delete_time / 2
 
 		times[count] = []string{fmt.Sprintf("%v", n), fmt.Sprintf("%v", insert_time),
 			fmt.Sprintf("%v", search_time), fmt.Sprintf("%v", delete_time)}
@@ -142,7 +144,8 @@ func ExpAll(DB dictBuilder, N int) {
 	}
 
 	d_type := strings.Replace(reflect.TypeOf(d).String(), "*main.", "", 1)
-	filename := fmt.Sprintf("Outputs/output%sAll.csv", d_type)
+	h, m, s := time.Now().Local().Clock()
+	filename := fmt.Sprintf("Outputs/output%sAll%dTime%d%d%d.csv", d_type, N, h, m, s)
 	fmt.Println(filename)
 	csvfile, err := os.Create(filename)
 	if err != nil {
@@ -161,7 +164,7 @@ func ExpAll(DB dictBuilder, N int) {
 }
 
 func Exper(d Dict, N int, operation string) {
-	reps := 4
+	reps := 5
 
 	// multiplier := 1.1
 	// trials := int(math.Log2(float64(N)) / math.Log2(multiplier)) //log (base multiplier) of n
@@ -234,7 +237,7 @@ func Exper(d Dict, N int, operation string) {
 			}
 
 			times[count] = []string{fmt.Sprintf("%v", n),
-				fmt.Sprintf("%v", float64(elapsed))}
+				fmt.Sprintf("%v", elapsed/float64(reps))}
 			count++
 		}
 	default:
@@ -244,7 +247,8 @@ func Exper(d Dict, N int, operation string) {
 	}
 
 	d_type := strings.Replace(reflect.TypeOf(d).String(), "*main.", "", 1)
-	filename := fmt.Sprintf("Outputs/output%s%s.csv", d_type, operation)
+	h, m, s := time.Now().Local().Clock()
+	filename := fmt.Sprintf("Outputs/output%s%sTime%d%d%d.csv", d_type, operation, h, m, s)
 	fmt.Println(filename)
 	csvfile, err := os.Create(filename)
 	if err != nil {

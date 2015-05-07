@@ -11,15 +11,22 @@ import (
 func main() {
 	rand.Seed(time.Now().UTC().UnixNano())
 
-	// N := 1000000
-	// ExpInsert(NewSkipList(), N)
-	// ExpSearch(NewSkipList(), N)
-	// ExpDelete(NewSkipList(), N)
+	N := 300000
+	ExpInsert(NewLLRB(), N)
+	ExpSearch(NewLLRB(), N)
+	ExpDelete(NewLLRB(), N)
 
-	N := 2000000
-	ExpAll(TreapBuilder, N)
+	ExpAll(LLRBBuilder, N)
 
-	TodolistEpsilonGraphs()
+	// N := 400000
+	// ExpInsert(NewTodoList(0.2), N)
+	// ExpSearch(NewTodoList(0.2), N)
+	// ExpDelete(NewTodoList(0.2), N)
+
+	// N := 500000
+	// ExpAll(SkipListBuilder, N)
+
+	// TodolistEpsilonGraphs()
 	// e.g. ExpAll(TodoListBuilder(0.2), N)
 
 	// N := 1000000
